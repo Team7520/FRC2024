@@ -43,7 +43,7 @@ public class Note {
     final static private double X_CENTER = SCREEN_WIDTH/2; // 320 pixel from the left side
     final static private double YDISTANCE_OFFSET = 0.15; // In meters to the left. What is actually calculated as relativeYDistance is 0.15m off physical measurements
     final static private double XDISTANCE_REDUCTION_FACOTR = 1; // To prevent robot from running over note's location, stopping it in front of note in position for pick up
-    final static private double MAXIMUM_ACCEPTED_RANGE = 3; // In meters
+    final static private double MAXIMUM_ACCEPTED_RANGE = 3; // In meters (3)
     final static private double CONFIDENCE_WEIGHT_FACTOR = 10;
     final static private double AREA_WEIGHT_FACTOR = 0.001;
     final static private double RANGE_WEIGHT_FACTOR = 0; // Add points if inside accepted range

@@ -39,6 +39,7 @@ import frc.team7520.robot.commands.Intake;
 import frc.team7520.robot.commands.Shooter;
 
 import frc.team7520.robot.commands.Amp;
+import frc.team7520.robot.commands.AutoClimber;
 import frc.team7520.robot.commands.TeleopDrive;
 import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 import frc.team7520.robot.subsystems.LED;
@@ -150,13 +151,16 @@ public class RobotContainer
 
 
         Climber climber = new Climber(climberSubsystem,
-                () -> false,
-                () -> false,
-                operatorController::getStartButton,
+                driverController::getYButton,
+                driverController::getYButton,
+                operatorController::getStartButton, //Start button not used
                 operatorController::getRightY,
                 operatorController::getLeftY,
                 operatorController::getBackButton
         );
+
+        //AutoClimber climberAutomatic = new AutoClimber(climberSubsystem, operatorController::getYButtonReleased);
+      
         // Intake intake = new Intake(intakeSubsystem,
         //         operatorController::getRightBumper,
         //         operatorController::getYButton,
@@ -166,17 +170,15 @@ public class RobotContainer
         //         intakeSubsystem::getSwitchVal
         // );
 
-        // Old drive method
-        // like in video games
-        // Easier to learn, harder to control
-        // Not tested not used
+        /* 
+        Old drive method like in video games, Easier to learn, harder to control, Not tested not used
         TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
                 () -> MathUtil.applyDeadband(driverController.getLeftY(),
                         OperatorConstants.LEFT_Y_DEADBAND),
                 () -> MathUtil.applyDeadband(driverController.getLeftX(),
                         OperatorConstants.LEFT_X_DEADBAND),
                 () -> driverController.getRawAxis(2), () -> true);
-
+        */
         drivebase.setDefaultCommand(closedAbsoluteDrive);
         ampSubsystem.setDefaultCommand(amp);
         shooterSubsystem.setDefaultCommand(shooter);

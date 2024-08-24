@@ -51,7 +51,8 @@ public class Climber extends Command {
      *
      * @param climberSubsystem The subsystem used by this command.
      */
-    public Climber(ClimberSubsystem climberSubsystem, BooleanSupplier retract, BooleanSupplier extent, BooleanSupplier stop, DoubleSupplier rightManual, DoubleSupplier leftManual, BooleanSupplier shift) {
+    public Climber(ClimberSubsystem climberSubsystem, BooleanSupplier retract, BooleanSupplier extent, 
+            BooleanSupplier stop, DoubleSupplier rightManual, DoubleSupplier leftManual, BooleanSupplier shift) {
         this.subsystem = climberSubsystem;
         this.bRetract = retract;
         this.bExtent = extent;
@@ -90,7 +91,7 @@ public class Climber extends Command {
     @Override
     public void execute() {
 
-        SmartDashboard.putString("State", convertState(this.state));
+        SmartDashboard.putString("State", convertState(state));
         double leftPosition = subsystem.getLeftPosition();
         double rightPosition = subsystem.getRightPosition();
 
@@ -107,33 +108,34 @@ public class Climber extends Command {
 
 
 
-        if (bExtent.getAsBoolean()) {
-            this.state = State.EXTEND;
+        if (bExtent.getAsBoolean() && state != State.EXTEND) {
+            state = State.EXTEND;
             subsystem.setRightArmReference(0);
             subsystem.setLeftArmReference(0);
-        } else if (bRetract.getAsBoolean()) {
+        } else if (bRetract.getAsBoolean() && state != State.RETRACT) {
             subsystem.setRightArmReference(ClimberConstants.maxPosition);
             subsystem.setLeftArmReference(ClimberConstants.maxPosition);
-            this.state = State.RETRACT;
-        } else if (bStop.getAsBoolean()) {
-            if (bShift.getAsBoolean()) {
-                subsystem.setZeroPos();
-                this.state = State.NOTHING;
-            } else {
-                subsystem.stop();
-                this.state = State.NOTHING;
-            }
-        }
-
-        if (this.state == State.NOTHING) {
+            state = State.RETRACT;
+        } else {
             double leftSpeed = bLeftManual.getAsDouble();
-            double rightSpeed= bRightManual.getAsDouble();
-            leftSpeed = Math.abs(leftSpeed) > 0.2 ? leftSpeed : 0;
-            rightSpeed = Math.abs(rightSpeed) > 0.2 ? -rightSpeed : 0;
+            double rightSpeed = -bRightManual.getAsDouble();
+            if (Math.abs(leftSpeed) > 0.2 || Math.abs(rightSpeed) > 0.2) {
+                state = State.NOTHING;
+            } else {
+                leftSpeed = 0;
+                rightSpeed = 0;
+            }
+            
             subsystem.setLeftSpeed(leftSpeed);
             subsystem.setRightSpeed(rightSpeed);
             
         }
+
+        if (bShift.getAsBoolean()) {
+            subsystem.setZeroPos();
+            this.state = State.NOTHING;
+        }
+        
     }
 
 
