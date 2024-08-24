@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.team7520.robot.auto.AutoIntake;
 import frc.team7520.robot.auto.AutoNotePickUp;
 import frc.team7520.robot.auto.AutoShoot;
+import frc.team7520.robot.auto.PathOTF;
 import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.commands.AbsoluteDrive;
 import frc.team7520.robot.commands.Climber;
@@ -284,11 +285,7 @@ public class RobotContainer
         /* If joysticks are moved while a path is in session, the path is overrided */
         new Trigger(() -> SwerveSubsystem.pathActive)
                 .and(() -> (Math.abs(driverController.getLeftX()) > 0.2 || Math.abs(driverController.getLeftY()) > 0.2 || Math.abs(driverController.getRightX()) > 0.2 || Math.abs(driverController.getRightY()) > 0.2))
-                .onTrue(new InstantCommand(() -> {
-                                var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(-1, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                                cmd.schedule();
-
-                        }));
+                .onTrue(new PathOTF(drivebase, -1, null, null, null));
 
 
         /* OTF Path Shooter timed */
@@ -301,6 +298,7 @@ public class RobotContainer
         new Trigger(() -> driverController.getPOV() == 270)
                 .onTrue((SwerveSubsystem.isBlueAlliance ? ampSpeakerShot() : sourceSpeakerShot()));
 
+        /* A trigger running the shooting sequence when path calls it */
         new Trigger(() -> speakerRoutineActivateShooter)
                 .onTrue(new ParallelCommandGroup(
                         new ShootSequence(),
@@ -348,19 +346,11 @@ public class RobotContainer
      */
     public Command notePickUp(boolean doubleCheck) {
         if (doubleCheck) {
-                return new InstantCommand(() -> {
-                                var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                                cmd.schedule();
-                                SwerveSubsystem.pathActive = true;
-                        }).until(() -> !SwerveSubsystem.pathActive)
+                return new PathOTF(drivebase, 0, null, null, null)
                         .andThen(notePickUp(false))
                         .onlyIf(intakeSubsystem::getSwitchVal);
         } else {
-                return new InstantCommand(() -> {
-                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                        cmd.schedule();          
-                        System.out.println("AGAIN!!!!!!!!");      
-                });
+                return new PathOTF(drivebase, 0, null, null, null);
         }
          
     }
@@ -370,15 +360,12 @@ public class RobotContainer
      * @return
      */
     public Command centralSpeakerShot() {
-                return new InstantCommand(() -> {
-                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
-                                1, 
-                                map.getSpeakerCenter(), 
-                                new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI))
-                        );
-                        cmd.schedule();                
-                });
+                return new PathOTF(
+                        drivebase, 
+                        1, 
+                        map.getSpeakerCenter(), 
+                        new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI), 
+                        new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI));
     }
 
     /**
@@ -386,30 +373,25 @@ public class RobotContainer
      * @return
      */
     public Command ampSpeakerShot() {
-                return new InstantCommand(() -> {
-                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
-                                1, 
-                                map.getSpeakerAmpSide(), 
-                                new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI))
-                        );
-                        cmd.schedule();                
-                });
+                return new PathOTF(
+                        drivebase, 
+                        1,
+                        map.getSpeakerAmpSide(), 
+                        new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI), 
+                        new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI));
+
     }
     /**
      * Runs OTF path to source side speaker position and shoot sequence, timed
      * @return
      */
     public Command sourceSpeakerShot() {
-                return new InstantCommand(() -> {
-                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
-                                1, 
-                                map.getSpeakerSourceSide(), 
-                                new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI))
-                        );
-                        cmd.schedule();                
-                });
+                return new PathOTF(
+                        drivebase, 
+                        1, 
+                        map.getSpeakerSourceSide(), 
+                        new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI), 
+                        new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI));
     }
 
     public void teleOpInit() {

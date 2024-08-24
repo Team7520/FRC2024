@@ -622,9 +622,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if (mode == 0) {
             /* Note sequence */
-            if (noteAvailable) {
-                pathActive = true;
-                
+            if (noteAvailable) {                
                 double globalVelocity = 1.5;
                 Rotation2d endDirection = Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach());
                 Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
@@ -670,7 +668,6 @@ public class SwerveSubsystem extends SubsystemBase {
             }
 
         } else if (mode == 1) {
-            pathActive = true;
             /* Shooting sequence */
             if (true) { // Change the argument to whether you are in range for the position using Map
                 List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
