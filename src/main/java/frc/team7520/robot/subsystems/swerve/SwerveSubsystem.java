@@ -308,6 +308,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("ROBOT POSE Y", getPose().getY());
         SmartDashboard.putNumber("Current Pose Angle", getPose().getRotation().getDegrees());
         aprilTagSystem.periodic(getPose());
+        System.out.println(pathActive);
 
         /** Note Detection Stuff */
         tpuSystem.periodic();
@@ -630,7 +631,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));
                 if (Math.abs(notePose.getNorm()) < 0.9) {
                     startPose = new Pose2d(x - notePose.getX()/4, y - notePose.getY()/4, endDirection.plus(Rotation2d.fromDegrees(180)));
-                    globalVelocity = 2;
+                    globalVelocity = 0.8;
                 } else if (Math.abs(notePose.getNorm()) < 1.3) {
                     startPose = new Pose2d(getPose().getTranslation(), endDirection.plus(Rotation2d.fromDegrees(180)));
                     globalVelocity = 0.7;
@@ -676,7 +677,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
 
                 EventMarker em = new EventMarker(0.7, new InstantCommand(() -> {RobotContainer.speakerRoutineActivateShooter = true;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
-                EventMarker signalEnd = new EventMarker(1, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
+                EventMarker signalEnd = new EventMarker(0.97, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
                 List<EventMarker> lst_em = Arrays.asList(em, signalEnd);
             
                 //RotationTarget rt = new RotationTarget(0.5, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()));
@@ -707,8 +708,8 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         // Create the path using the bezier points created above
-        EventMarker em = new EventMarker(1, new AutoIntake(Position.SHOOT));
-        EventMarker em2 = new EventMarker(1, new InstantCommand(() -> intakeSubsystem.setSpeed(0))); 
+        EventMarker em = new EventMarker(0, new AutoIntake(Position.SHOOT));
+        EventMarker em2 = new EventMarker(0, new InstantCommand(() -> intakeSubsystem.setSpeed(0))); 
         List<EventMarker> lst_em = Arrays.asList(em, em2);
        
         List<RotationTarget> lst_rt = Arrays.asList();
