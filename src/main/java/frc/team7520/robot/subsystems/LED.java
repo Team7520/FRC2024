@@ -23,7 +23,7 @@ public class LED extends SubsystemBase {
     private final static LED INSTANCE = new LED();
 
     private double m_Color = 0.0;
-    private Spark m_ledController = new Spark(0);
+    private Spark m_ledController = new Spark(1);
     
 
     /**
@@ -45,31 +45,19 @@ public class LED extends SubsystemBase {
 
     }
 
-    public Command idle() {
-        return run(
-            () -> {
-                m_Color = 0.61; // RED
-                m_ledController.set(m_Color);
-            }
-        );
+    public void idle() {
+        m_Color = -0.99; // RAINBOW_RAINBOW_PALETTE
+        m_ledController.set(m_Color);
     }
 
-    public InstantCommand noteInIntake() {
-        return new InstantCommand(
-            () -> {
-                m_Color = 0.87; // BLUE
-                m_ledController.set(m_Color);
-            }
-        );
+    public void noteInIntake() {
+        m_Color = 0.93; // WHITE
+        m_ledController.set(m_Color);
     }
 
-    public InstantCommand noteInTurret() {
-        return new InstantCommand(
-            () -> {
-                m_Color = 0.77; // GREEN
-                m_ledController.set(m_Color);
-            }
-        );
+    public void noteInTurret() {
+        m_Color = 0.77; // GREEN
+        m_ledController.set(m_Color);
     }
 }
 

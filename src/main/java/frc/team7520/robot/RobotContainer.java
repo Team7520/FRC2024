@@ -78,7 +78,8 @@ public class RobotContainer
     private final XboxController operatorController =
             new XboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
-    private final Intake intake = new Intake(intakeSubsystem,
+    private final Intake intake = new Intake(
+            intakeSubsystem,
             operatorController::getAButton,
             operatorController::getBButton,
             operatorController::getLeftBumper // fire
@@ -91,7 +92,12 @@ public class RobotContainer
         
     public Shooter shooter;
 
-    private final Sensor sensor = new Sensor(sensorSubsystem,LEDSubsystem);
+    private final Sensor sensor = new Sensor(
+        sensorSubsystem, 
+        LEDSubsystem, 
+        sensorSubsystem::getBeamBreak, 
+        sensorSubsystem::getColorSensorProximity
+        );
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
