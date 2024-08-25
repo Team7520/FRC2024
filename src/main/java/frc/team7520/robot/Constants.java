@@ -52,7 +52,7 @@ public final class Constants {
     }
 
     public static class Swerve {
-        public static final double DRIVE_GEAR_RATIO = 4.9; //6.7 previously for kraken/neo swerve3, 8.6 for swerve2 before it was changed
+        public static final double DRIVE_GEAR_RATIO = 6.7; //6.7 previously for kraken/neo swerve3, 8.6 for swerve2 before it was changed
         public static final double ANGLE_GEAR_RATIO = 150/7d;
     }
 
@@ -141,6 +141,7 @@ public final class Constants {
         public static final int climberLeftID = 30;
         public static final int climberRightID = 31;
         public static final int maxPosition = 520;
+        //public static final int maxPositionAutomatic = 130;
 
         public static final double kP = 0.004;
         public static final double kI = 0.0;

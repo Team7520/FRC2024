@@ -46,6 +46,7 @@ import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import frc.team7520.robot.util.AprilTagSystem;
 import frc.team7520.robot.util.Map;
+import frc.team7520.robot.util.Note;
 import frc.team7520.robot.util.AprilTagSystem;
 import frc.team7520.robot.util.TpuSystem;
 import swervelib.SwerveController;
@@ -308,6 +309,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("ROBOT POSE Y", getPose().getY());
         SmartDashboard.putNumber("Current Pose Angle", getPose().getRotation().getDegrees());
         aprilTagSystem.periodic(getPose());
+        System.out.println(pathActive);
 
         /** Note Detection Stuff */
         tpuSystem.periodic();
@@ -624,32 +626,32 @@ public class SwerveSubsystem extends SubsystemBase {
             /* Note sequence */
             if (noteAvailable) {
                 pathActive = true;
-                List<Translation2d> bezierPoints;
-                double globalVelocity = 1.5;
+                
+                double globalVelocity = 1;
+                Rotation2d endDirection = Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach());
+                Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
                 //int poseNumOfExtra = 0;
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));
-                if (Math.abs(notePose.getNorm()) < 1.3) {
-                    bezierPoints = PathPlannerPath.bezierFromPoses(
-                        new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach() + 180)), 
-                        //new Pose2d(x - notePose.getX()/4, y - notePose.getY()/4, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach())),
-                        new Pose2d(x + notePose.getX(), y + notePose.getY(), Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()))
-                    );
+                if (Math.abs(notePose.getNorm()) < 0.9-Note.XDISTANCE_OFFSET) {
+                    startPose = new Pose2d(x - notePose.getX()/4, y - notePose.getY()/4, endDirection.plus(Rotation2d.fromDegrees(180)));
+                    globalVelocity = 0.8;
+                } else if (Math.abs(notePose.getNorm()) < 1.3-Note.XDISTANCE_OFFSET) {
+                    startPose = new Pose2d(getPose().getTranslation(), endDirection.plus(Rotation2d.fromDegrees(180)));
                     globalVelocity = 0.7;
-                    //poseNumOfExtra = 1;
-                } else {
-                    bezierPoints = PathPlannerPath.bezierFromPoses(
-                        getPose(),
-                        //new Pose2d(x + notePose.getX()/2, y + notePose.getY()/2, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach())), 
-                        new Pose2d(x + notePose.getX(), y + notePose.getY(), Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()))
-                    );
                 }
+
+                List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+                    startPose,
+                    new Pose2d(x + notePose.getX(), y + notePose.getY(), endDirection)
+                );
+                
                 EventMarker em = new EventMarker(0, new AutoNotePickUp());
                 EventMarker em3 = new EventMarker(1, new AutoIntake(Position.SHOOT));
                 EventMarker em4 = new EventMarker(1, new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
                 EventMarker signalEnd = new EventMarker(0.95, new InstantCommand(() -> {pathActive = false;}));
                 List<EventMarker> lst_em = Arrays.asList(em, em3, em4, signalEnd);
 
-                RotationTarget rt = new RotationTarget(0.2, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()));
+                RotationTarget rt = new RotationTarget(0, endDirection);
                 List<RotationTarget> lst_rt = Arrays.asList(rt);
                 
                 //ConstraintsZone cz = new ConstraintsZone(0.3, 0.6, new PathConstraints(0.05, 0.5, 0.5 * Math.PI, 0.5 * Math.PI));
@@ -661,13 +663,14 @@ public class SwerveSubsystem extends SubsystemBase {
                     lst_cz,
                     lst_em,
                     new PathConstraints(1.5, globalVelocity, 2 * Math.PI, 2 * Math.PI),
-                    new GoalEndState(0.0, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach())),
+                    new GoalEndState(0.0, endDirection),
                     false
                 );
 
                 path.preventFlipping = true;
                 return path;
             }
+
         } else if (mode == 1) {
             pathActive = true;
             /* Shooting sequence */
@@ -678,7 +681,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
 
                 EventMarker em = new EventMarker(0.7, new InstantCommand(() -> {RobotContainer.speakerRoutineActivateShooter = true;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
-                EventMarker signalEnd = new EventMarker(1, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
+                EventMarker signalEnd = new EventMarker(0.97, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
                 List<EventMarker> lst_em = Arrays.asList(em, signalEnd);
             
                 //RotationTarget rt = new RotationTarget(0.5, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()));
@@ -709,8 +712,8 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         // Create the path using the bezier points created above
-        EventMarker em = new EventMarker(1, new AutoIntake(Position.SHOOT));
-        EventMarker em2 = new EventMarker(1, new InstantCommand(() -> intakeSubsystem.setSpeed(0))); 
+        EventMarker em = new EventMarker(0, new AutoIntake(Position.SHOOT));
+        EventMarker em2 = new EventMarker(0, new InstantCommand(() -> intakeSubsystem.setSpeed(0))); 
         List<EventMarker> lst_em = Arrays.asList(em, em2);
        
         List<RotationTarget> lst_rt = Arrays.asList();

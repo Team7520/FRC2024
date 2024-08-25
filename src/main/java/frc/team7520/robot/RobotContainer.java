@@ -40,6 +40,7 @@ import frc.team7520.robot.commands.Intake;
 import frc.team7520.robot.commands.Shooter;
 
 import frc.team7520.robot.commands.Amp;
+import frc.team7520.robot.commands.AutoClimber;
 import frc.team7520.robot.commands.TeleopDrive;
 import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 import frc.team7520.robot.subsystems.LED;
@@ -78,6 +79,8 @@ public class RobotContainer
         public static boolean speakerRoutineActivateShooter = false;
 
         public final static Map map = new Map();
+
+        private boolean notePathTrigger = false;
 
 
     // Subsystems
@@ -151,13 +154,16 @@ public class RobotContainer
 
 
         Climber climber = new Climber(climberSubsystem,
-                () -> false,
-                () -> false,
-                operatorController::getStartButton,
+                driverController::getYButton,
+                driverController::getYButton,
+                operatorController::getStartButton, //Start button not used
                 operatorController::getRightY,
                 operatorController::getLeftY,
                 operatorController::getBackButton
         );
+
+        //AutoClimber climberAutomatic = new AutoClimber(climberSubsystem, operatorController::getYButtonReleased);
+      
         // Intake intake = new Intake(intakeSubsystem,
         //         operatorController::getRightBumper,
         //         operatorController::getYButton,
@@ -167,17 +173,15 @@ public class RobotContainer
         //         intakeSubsystem::getSwitchVal
         // );
 
-        // Old drive method
-        // like in video games
-        // Easier to learn, harder to control
-        // Not tested not used
+        /* 
+        Old drive method like in video games, Easier to learn, harder to control, Not tested not used
         TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
                 () -> MathUtil.applyDeadband(driverController.getLeftY(),
                         OperatorConstants.LEFT_Y_DEADBAND),
                 () -> MathUtil.applyDeadband(driverController.getLeftX(),
                         OperatorConstants.LEFT_X_DEADBAND),
                 () -> driverController.getRawAxis(2), () -> true);
-
+        */
         drivebase.setDefaultCommand(closedAbsoluteDrive);
         ampSubsystem.setDefaultCommand(amp);
         shooterSubsystem.setDefaultCommand(shooter);
@@ -271,6 +275,7 @@ public class RobotContainer
                .whileFalse(new RepeatCommand(LEDSubsystem.noteIn()))
                 .onTrue(LEDSubsystem.idle());
 
+
         new Trigger(drivebase::getNoteAvailable).and(intakeSubsystem::getSwitchVal)
                 .whileTrue(new RepeatCommand(LEDSubsystem.noteAvailable()));
 
@@ -278,7 +283,7 @@ public class RobotContainer
         
         /* OTF Path Note using sensor feedback */
         new JoystickButton(driverController, XboxController.Button.kB.value).and(intakeSubsystem::getSwitchVal)
-                .onTrue(notePickUp(false));
+                .onTrue(notePickUp(true));
 
         /* If joysticks are moved while a path is in session, the path is overrided */
         new Trigger(() -> SwerveSubsystem.pathActive)
@@ -305,6 +310,16 @@ public class RobotContainer
                         new ShootSequence(),
                         new InstantCommand(() -> {speakerRoutineActivateShooter = false;})
                 ));
+        
+        /* For chaining OTF Note Auto */
+        new Trigger(() -> !SwerveSubsystem.pathActive && notePathTrigger)
+                .onTrue(
+                        new InstantCommand(() -> {notePathTrigger = false;})
+                        //.andThen()
+                        //Turn to face alliance wall command by david
+                        .andThen(new ShootSequence())
+                        //.andThen(notePickUp(true))
+                );
     }
 
 
@@ -347,18 +362,22 @@ public class RobotContainer
      */
     public Command notePickUp(boolean doubleCheck) {
         if (doubleCheck) {
-                return new InstantCommand(() -> {
-                                var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                                cmd.schedule();
-                                SwerveSubsystem.pathActive = true;
-                        }).until(() -> !SwerveSubsystem.pathActive)
-                        .andThen(notePickUp(false))
-                        .onlyIf(intakeSubsystem::getSwitchVal);
+                return new InstantCommand(() -> {                        
+                        SwerveSubsystem.pathActive = true;
+                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
+                        cmd.schedule();
+                        
+                })
+                //.onlyIf(intakeSubsystem::getSwitchVal);
+                .finallyDo((boolean interrupted) -> {
+                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        notePathTrigger = true; 
+                });
         } else {
                 return new InstantCommand(() -> {
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
                         cmd.schedule();          
-                        System.out.println("AGAIN!!!!!!!!");      
+                        //System.out.println("AGAIN!!!!!!!!");      
                 });
         }
          
