@@ -1,4 +1,4 @@
-package frc.team7520.robot.auto;
+/*package frc.team7520.robot.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.team7520.robot.Constants;
@@ -44,3 +44,4 @@ public class AutoIntake extends Command {
 
     }
 }
+*/

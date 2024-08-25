@@ -85,34 +85,12 @@ public final class Constants {
             }
         }
 
-        public static class PivotConstants {
-            public static final int CAN_ID = 23;
-
-            public static final double GearRatio = 100;
-            public static final double degreeConversionFactor = 360/GearRatio;
-            public static final double rotationConversionFactor = 1/GearRatio;
-
-            public static final double Intake = 211.374d;
-            public static final double Amp = 23.809415817260742 * degreeConversionFactor;
-            public static final double Shoot = 0;
-
-            public static final double kP = 0.00022;
-            public static final double kI = 0;
-            public static final double kD = 0;
-            public static final double kFF = 0.000156;
-
-            public static final double OUTPUT_MAX = 1;
-            public static final double OUTPUT_MIN = -1;
-
-            public static final double SmartMaxVel = 600000;
-            public static final double SmartMinVel = 0;
-            public static final double SmartAccel = 10000;
-            public static final double SmartErr = 2;
-            public static final int SlotID = 0;
-        }
         public static class WheelConstants {
-            public static final int CAN_ID = 22;
-
+            public static final int IntakeBottomID = 25;
+            public static final int IntakeTopID = 26; // spin positive
+            public static final int RingOneID = 14;
+            public static final int RingTwoID = 15;
+            public static final int FeederID = 42;
             public static final double kP = 0.0020645;
             public static final double kI = 0;
             public static final double kD = 0;
@@ -123,16 +101,18 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-        public static final int shooterLeftID = 20;
-        public static final int shooterRightID = 21;
+        public static final int shooterBotID = 20;
+        public static final int shooterTopID = 19;
+        public static final int pivotID = 21; //negative spin direction make pivot go upwards
         public static final int ampMechID = 25;
-
+        public static final int traverseID = 16;
         public static final double kP = 0.002;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kFF = 0.000156;
 
         public static final double MAX_RPM = 5676;
+
 
 
     }

@@ -23,18 +23,20 @@ import frc.team7520.robot.Constants.IntakeConstants.Position;
 import frc.team7520.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.team7520.robot.auto.AutoIntake;
-import frc.team7520.robot.auto.AutoShoot;
-import frc.team7520.robot.auto.ShootSequence;
+// import frc.team7520.robot.auto.AutoIntake;
+// import frc.team7520.robot.auto.AutoShoot;
+// import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.commands.AbsoluteDrive;
-import frc.team7520.robot.commands.Climber;
+//import frc.team7520.robot.commands.Climber;
 import frc.team7520.robot.commands.Intake;
+import frc.team7520.robot.commands.Sensor;
 import frc.team7520.robot.commands.Shooter;
 
 import frc.team7520.robot.commands.Amp;
 import frc.team7520.robot.commands.TeleopDrive;
-import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
+//import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 import frc.team7520.robot.subsystems.LED;
+import frc.team7520.robot.subsystems.SensorSubsystem;
 import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import frc.team7520.robot.subsystems.amp.AmpSubsystem;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
@@ -42,7 +44,6 @@ import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 
 import java.io.File;
 
-import static frc.team7520.robot.subsystems.LED.candle;
 
 
 /**
@@ -57,13 +58,15 @@ public class RobotContainer
     private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
             "swerve/neo"));
 
-    private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
+    //private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
     private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
 
+    private final SensorSubsystem sensorSubsystem = SensorSubsystem.getInstance();
+
 //    private final AmpSubsystem ampSubsystem = AmpSubsystem.getInstance();
 
-    private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
+    //private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
     private final LED LEDSubsystem = LED.getInstance();
 
     public final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -76,20 +79,19 @@ public class RobotContainer
             new XboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
     private final Intake intake = new Intake(intakeSubsystem,
-            operatorController::getRightBumper,
-            operatorController::getYButton,
             operatorController::getAButton,
             operatorController::getBButton,
-            operatorController::getXButton
+            operatorController::getLeftBumper // fire
         );
+
+
 
 //        private final Amp amp = new Amp(ampSubsystem,
 //                operatorController::getPOV);
-
+        
     public Shooter shooter;
 
-
-
+    private final Sensor sensor = new Sensor(sensorSubsystem,LEDSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
@@ -97,12 +99,13 @@ public class RobotContainer
 
         registerAutos();
 
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
 
         // Configure the trigger bindings
         configureBindings();
 
         // Left joystick is the angle of the robot
+        /* 
         AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                 // Applies deadbands and inverts controls because joysticks
                 // are back-right positive while robot
@@ -117,24 +120,17 @@ public class RobotContainer
                 driverController::getLeftBumper,
                 () -> driverController.getXButton()
         );
+*/
+        //  shooter = new Shooter(shooterSubsystem,
+        //         operatorController::getLeftX, // <-->
+        //         operatorController::getRightY, //pivot
+        //         operatorController::getLeftTriggerAxis, // spin up shooter
+        //         operatorController::getXButton
+        //  );
 
-         shooter = new Shooter(shooterSubsystem,
-                operatorController::getLeftTriggerAxis,
-                operatorController::getRightTriggerAxis,
-                operatorController::getLeftBumper
-        );
-
-
-        Climber climber = new Climber(climberSubsystem,
-                () -> false,
-                () -> false,
-                operatorController::getStartButton,
-                operatorController::getRightY,
-                operatorController::getLeftY,
-                operatorController::getBackButton
-        );
         // Intake intake = new Intake(intakeSubsystem,
-        //         operatorController::getRightBumper,
+        //         () -> operatorController.getAButton()
+        //         );
         //         operatorController::getYButton,
         //         operatorController::getAButton,
         //         operatorController::getBButton,
@@ -153,50 +149,52 @@ public class RobotContainer
                         OperatorConstants.LEFT_X_DEADBAND),
                 () -> driverController.getRawAxis(2), () -> true);
 
-        drivebase.setDefaultCommand(closedAbsoluteDrive);
+        //drivebase.setDefaultCommand(closedAbsoluteDrive);
 //        ampSubsystem.setDefaultCommand(amp);
-        shooterSubsystem.setDefaultCommand(shooter);
+        //shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
-        climberSubsystem.setDefaultCommand(climber);
-        LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
+        sensorSubsystem.setDefaultCommand(sensor);
+        
+        //climberSubsystem.setDefaultCommand(climber);
+        //LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
 
-        candle.animate(LEDSubsystem.idleAnimation);
+        //candle.animate(LEDSubsystem.idleAnimation);
     }
 
     private void registerAutos(){
 
-        registerNamedCommands();
+        // registerNamedCommands();
 
-        autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("safe", true));
-        autoChooser.addOption("Amp", drivebase.getPPAutoCommand("Amp", true));
-        autoChooser.addOption("Test", drivebase.getPPAutoCommand("test", true));
-        autoChooser.addOption("BotToCentBot", drivebase.getPPAutoCommand("BotToCentBot", true));
-        autoChooser.addOption("MidToCentTop", drivebase.getPPAutoCommand("MidToCentTop", true));
-        autoChooser.addOption("TopToCentTop", drivebase.getPPAutoCommand("TopToCentTop", true));
-        autoChooser.addOption("2Note", drivebase.getPPAutoCommand("2NoteMid", true));
-        autoChooser.addOption("3NoteMid.Note1", drivebase.getPPAutoCommand("3NoteMid.Note1", true));
-        autoChooser.addOption("3NoteMid.Note3", drivebase.getPPAutoCommand("3NoteMid.Note3", true));
-        autoChooser.addOption("4Note", drivebase.getPPAutoCommand("4Note", true));
-        autoChooser.addOption("4Note(StraightReturn)", drivebase.getPPAutoCommand("4Note(StraightReturn)", true));
-        autoChooser.addOption("2NoteSpeakerS.Note3", drivebase.getPPAutoCommand("2NoteSpeakerS.Note3", true));
-        autoChooser.addOption("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", drivebase.getPPAutoCommand("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", true));
+        // autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("safe", true));
+        // autoChooser.addOption("Amp", drivebase.getPPAutoCommand("Amp", true));
+        // autoChooser.addOption("Test", drivebase.getPPAutoCommand("test", true));
+        // autoChooser.addOption("BotToCentBot", drivebase.getPPAutoCommand("BotToCentBot", true));
+        // autoChooser.addOption("MidToCentTop", drivebase.getPPAutoCommand("MidToCentTop", true));
+        // autoChooser.addOption("TopToCentTop", drivebase.getPPAutoCommand("TopToCentTop", true));
+        // autoChooser.addOption("2Note", drivebase.getPPAutoCommand("2NoteMid", true));
+        // autoChooser.addOption("3NoteMid.Note1", drivebase.getPPAutoCommand("3NoteMid.Note1", true));
+        // autoChooser.addOption("3NoteMid.Note3", drivebase.getPPAutoCommand("3NoteMid.Note3", true));
+        // autoChooser.addOption("4Note", drivebase.getPPAutoCommand("4Note", true));
+        // autoChooser.addOption("4Note(StraightReturn)", drivebase.getPPAutoCommand("4Note(StraightReturn)", true));
+        // autoChooser.addOption("2NoteSpeakerS.Note3", drivebase.getPPAutoCommand("2NoteSpeakerS.Note3", true));
+        // autoChooser.addOption("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", drivebase.getPPAutoCommand("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", true));
 
-        // 1note shoot and Speaker Source side to note8 parking
-        autoChooser.addOption("SpeakerS.Note8", drivebase.getPPAutoCommand("SpeakerS.Note8", true));
+        // // 1note shoot and Speaker Source side to note8 parking
+        // autoChooser.addOption("SpeakerS.Note8", drivebase.getPPAutoCommand("SpeakerS.Note8", true));
 
-        // 2note Ampside
-        autoChooser.addOption("SpeakerA.Note1.SpeakerA", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA", true));
-        // 2note Ampside with move to center
-        autoChooser.addOption("SpeakerA.Note1.SpeakerA.Note4", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA.Note4", true));
-        autoChooser.addOption("SpeakerS.Note8.SpeakerS", drivebase.getPPAutoCommand("SpeakerS.Note8.SpeakerS", true));
-        autoChooser.addOption("4NoteButFaster", drivebase.getPPAutoCommand("4NoteButFaster", true));
+        // // 2note Ampside
+        // autoChooser.addOption("SpeakerA.Note1.SpeakerA", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA", true));
+        // // 2note Ampside with move to center
+        // autoChooser.addOption("SpeakerA.Note1.SpeakerA.Note4", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA.Note4", true));
+        // autoChooser.addOption("SpeakerS.Note8.SpeakerS", drivebase.getPPAutoCommand("SpeakerS.Note8.SpeakerS", true));
+        // autoChooser.addOption("4NoteButFaster", drivebase.getPPAutoCommand("4NoteButFaster", true));
 
-        // Troll Auto
-        autoChooser.addOption("TrollAuto3NoteFeed", drivebase.getPPAutoCommand("TrollAuto3NoteFeed", true));
+        // // Troll Auto
+        // autoChooser.addOption("TrollAuto3NoteFeed", drivebase.getPPAutoCommand("TrollAuto3NoteFeed", true));
 
-        autoChooser.addOption("Just shoot", new ShootSequence());
+        // autoChooser.addOption("Just shoot", new ShootSequence());
 
-        SmartDashboard.putData(autoChooser);
+        // SmartDashboard.putData(autoChooser);
     }
 
     /**
@@ -206,13 +204,13 @@ public class RobotContainer
     private void registerNamedCommands()
     {
         // Example
-        NamedCommands.registerCommand("shoot", new ShootSequence());
-        NamedCommands.registerCommand("log", new InstantCommand(() -> System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee")));
-        NamedCommands.registerCommand("intakeOut", new AutoIntake(Position.INTAKE));
-        NamedCommands.registerCommand("intake", new InstantCommand(() -> intakeSubsystem.setSpeed(Position.INTAKE.getSpeed())));
-        NamedCommands.registerCommand("stopIntaking", new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
-        NamedCommands.registerCommand("intakeIn", new AutoIntake(Position.SHOOT));
-        NamedCommands.registerCommand("stopShoot", new AutoShoot(0, false));
+        // NamedCommands.registerCommand("shoot", new ShootSequence());
+        // NamedCommands.registerCommand("log", new InstantCommand(() -> System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee")));
+        // NamedCommands.registerCommand("intakeOut", new AutoIntake(Position.INTAKE));
+        // NamedCommands.registerCommand("intake", new InstantCommand(() -> intakeSubsystem.setSpeed(Position.INTAKE.getSpeed())));
+        // NamedCommands.registerCommand("stopIntaking", new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
+        // NamedCommands.registerCommand("intakeIn", new AutoIntake(Position.SHOOT));
+        // NamedCommands.registerCommand("stopShoot", new AutoShoot(0, false));
 
 
     }
@@ -237,19 +235,19 @@ public class RobotContainer
         new JoystickButton(driverController, XboxController.Button.kX.value)
                 .whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock)));
 
-        new Trigger(() -> intake.currPosition == Position.INTAKE)
-                .and(new JoystickButton(operatorController, XboxController.Button.kRightBumper.value))
-                .onTrue(new RepeatCommand(LEDSubsystem.intaking()))
-                .onFalse(LEDSubsystem.idle());
+        // new Trigger(() -> intake.currPosition == Position.INTAKE)
+        //         .and(new JoystickButton(operatorController, XboxController.Button.kRightBumper.value))
+        //         .onTrue(new RepeatCommand(LEDSubsystem.intaking()))
+        //         .onFalse(LEDSubsystem.idle());
 
-        new Trigger(() -> intake.currPosition == Position.INTAKE)
-                .and(new JoystickButton(operatorController, XboxController.Button.kX.value))
-                .whileTrue(new RepeatCommand(LEDSubsystem.intaking()))
-                .onFalse(LEDSubsystem.idle());
+        // new Trigger(() -> intake.currPosition == Position.INTAKE)
+        //         .and(new JoystickButton(operatorController, XboxController.Button.kX.value))
+        //         .whileTrue(new RepeatCommand(LEDSubsystem.intaking()))
+        //         .onFalse(LEDSubsystem.idle());
 
-        new Trigger(intakeSubsystem::getSwitchVal)
-                .whileFalse(new RepeatCommand(LEDSubsystem.noteIn()))
-                .onTrue(LEDSubsystem.idle());
+        // new Trigger(intakeSubsystem::getSwitchVal)
+        //         .whileFalse(new RepeatCommand(LEDSubsystem.noteIn()))
+        //         .onTrue(LEDSubsystem.idle());
         // Should be reversed because light switch is default false
     }
 
@@ -261,24 +259,25 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new AutoShoot(0.7, false))),
-                        autoChooser.getSelected()
-                ),
-                new InstantCommand(() -> shooterSubsystem.setDefaultCommand(shooter))
-        ).finallyDo((boolean inturupted) -> {
-            if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
-                drivebase.setGyro(drivebase.getHeading().minus(Rotation2d.fromDegrees(180)));
-            }
+        return null;
+        // return new SequentialCommandGroup(
+        //         new ParallelCommandGroup(
+        //                 new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new AutoShoot(0.7, false))),
+        //                 autoChooser.getSelected()
+        //         ),
+        //         new InstantCommand(() -> shooterSubsystem.setDefaultCommand(shooter))
+        // ).finallyDo((boolean inturupted) -> {
+        //     if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
+        //         drivebase.setGyro(drivebase.getHeading().minus(Rotation2d.fromDegrees(180)));
+        //     }
 
-            shooterSubsystem.setDefaultCommand(shooter);
-        });
+        //     shooterSubsystem.setDefaultCommand(shooter);
+        // });
     }
 
     public void teleOpInit() {
 
-        shooterSubsystem.setDefaultCommand(shooter);
+        //shooterSubsystem.setDefaultCommand(shooter);
 
     }
 }

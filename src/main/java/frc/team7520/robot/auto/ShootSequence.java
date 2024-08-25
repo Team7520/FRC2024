@@ -1,4 +1,4 @@
-package frc.team7520.robot.auto;
+/*package frc.team7520.robot.auto;
 
 
 import edu.wpi.first.wpilibj2.command.*;
@@ -27,3 +27,4 @@ public class ShootSequence extends SequentialCommandGroup {
         );
     }
 }
+*/

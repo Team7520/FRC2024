@@ -9,6 +9,8 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
+import frc.team7520.robot.Constants.IntakeConstants;
+import frc.team7520.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -16,14 +18,17 @@ public class ShooterSubsystem extends SubsystemBase {
     // constructor must appear before the "INSTANCE" variable so that they are initialized
     // before the constructor is called when the "INSTANCE" variable initializes.
 
-    private TalonFX leftShooterMotor;
-    private TalonFX rightShooterMotor;
+    private TalonFX botShooterMotor;
+    private TalonFX topShooterMotor;
+    private TalonFX pivotMotor;
+    
+    private TalonFX traverseMotor = new TalonFX(ShooterConstants.traverseID);
+    private SparkPIDController botShooterPID;
+    private SparkPIDController topShooterPID;
 
-    private SparkPIDController leftShooterPID;
-    private SparkPIDController rightShooterPID;
 
-    private RelativeEncoder leftShooterEncoder;
-    private RelativeEncoder rightShooterEncoder;
+    private RelativeEncoder botShooterEncoder;
+    private RelativeEncoder topShooterEncoder;
 
     private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(100);
 
@@ -100,31 +105,38 @@ public class ShooterSubsystem extends SubsystemBase {
 //        leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 //        rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-        leftShooterMotor = new TalonFX(Constants.ShooterConstants.shooterLeftID);
-        rightShooterMotor = new TalonFX(Constants.ShooterConstants.shooterRightID);
-
-
-        leftShooterMotor.setInverted(false);
-        rightShooterMotor.setInverted(true);
+        botShooterMotor = new TalonFX(Constants.ShooterConstants.shooterBotID); // left = bot
+        topShooterMotor = new TalonFX(Constants.ShooterConstants.shooterTopID);
+        pivotMotor = new TalonFX(Constants.ShooterConstants.pivotID);
+        
+        botShooterMotor.setInverted(true);
+        topShooterMotor.setInverted(true);
+        pivotMotor.setInverted(true);
     }
-
+    public void setHorizontalSpeed(double speed){
+        traverseMotor.set(speed);
+    }
+    public void setPivotSpeed(double speed) {
+        pivotMotor.set(speed);
+    }
+    
     public void setSpeed(double speed, boolean closedLoop) {
         speed = mSpeedLimiter.calculate(speed);
 
         if (closedLoop) {
             speed *= Constants.ShooterConstants.MAX_RPM;
 
-            leftShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
-            rightShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
+            botShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
+            topShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
         } else {
-            leftShooterMotor.set(speed);
-            rightShooterMotor.set(speed);
+            botShooterMotor.set(speed);
+            topShooterMotor.set(speed);
         }
     }
 
     public void stop() {
-        leftShooterMotor.stopMotor();
-        rightShooterMotor.stopMotor();
+        botShooterMotor.stopMotor();
+        topShooterMotor.stopMotor();
     }
 }
 

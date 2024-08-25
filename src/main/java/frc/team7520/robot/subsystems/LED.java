@@ -4,6 +4,7 @@ package frc.team7520.robot.subsystems;
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,11 +22,9 @@ public class LED extends SubsystemBase {
      */
     private final static LED INSTANCE = new LED();
 
-    public final static CANdle candle = new CANdle(17);
-
-    public final Animation idleAnimation = new RainbowAnimation(255, 0.75, 100);
-    private final Animation intakingAnimation = new ColorFlowAnimation(255, 165, 0, 0, 0.75, 100, Direction.Forward);
-    private final Animation noteIn = new ColorFlowAnimation(0, 255, 0, 0, 0.75, 100, Direction.Forward);
+    private double m_Color = 0.0;
+    private Spark m_ledController = new Spark(0);
+    
 
     /**
      * Returns the Singleton instance of this LED. This static method
@@ -49,31 +48,26 @@ public class LED extends SubsystemBase {
     public Command idle() {
         return run(
             () -> {
-                candle.animate(idleAnimation);
+                m_Color = 0.61; // RED
+                m_ledController.set(m_Color);
             }
         );
     }
 
-    public InstantCommand intaking() {
+    public InstantCommand noteInIntake() {
         return new InstantCommand(
             () -> {
-                candle.animate(intakingAnimation);
+                m_Color = 0.87; // BLUE
+                m_ledController.set(m_Color);
             }
         );
     }
 
-    public InstantCommand noteIn() {
+    public InstantCommand noteInTurret() {
         return new InstantCommand(
             () -> {
-                candle.animate(noteIn);
-            }
-        );
-    }
-
-    public InstantCommand clear() {
-        return new InstantCommand(
-            () -> {
-                candle.clearAnimation(0);
+                m_Color = 0.77; // GREEN
+                m_ledController.set(m_Color);
             }
         );
     }
