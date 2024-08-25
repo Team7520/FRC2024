@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.team7520.robot.auto.AutoIntake;
 import frc.team7520.robot.auto.AutoNotePickUp;
 import frc.team7520.robot.auto.AutoShoot;
+import frc.team7520.robot.auto.AutoIntake;
 import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.commands.AbsoluteDrive;
 import frc.team7520.robot.commands.Climber;
