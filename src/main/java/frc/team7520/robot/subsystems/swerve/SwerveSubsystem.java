@@ -46,6 +46,7 @@ import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import frc.team7520.robot.util.AprilTagSystem;
 import frc.team7520.robot.util.Map;
+import frc.team7520.robot.util.Note;
 import frc.team7520.robot.util.AprilTagSystem;
 import frc.team7520.robot.util.TpuSystem;
 import swervelib.SwerveController;
@@ -626,15 +627,15 @@ public class SwerveSubsystem extends SubsystemBase {
             if (noteAvailable) {
                 pathActive = true;
                 
-                double globalVelocity = 1.5;
+                double globalVelocity = 1;
                 Rotation2d endDirection = Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach());
                 Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
                 //int poseNumOfExtra = 0;
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));
-                if (Math.abs(notePose.getNorm()) < 0.9) {
+                if (Math.abs(notePose.getNorm()) < 0.9-Note.XDISTANCE_OFFSET) {
                     startPose = new Pose2d(x - notePose.getX()/4, y - notePose.getY()/4, endDirection.plus(Rotation2d.fromDegrees(180)));
                     globalVelocity = 0.8;
-                } else if (Math.abs(notePose.getNorm()) < 1.3) {
+                } else if (Math.abs(notePose.getNorm()) < 1.3-Note.XDISTANCE_OFFSET) {
                     startPose = new Pose2d(getPose().getTranslation(), endDirection.plus(Rotation2d.fromDegrees(180)));
                     globalVelocity = 0.7;
                 }
