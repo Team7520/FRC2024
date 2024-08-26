@@ -628,7 +628,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 pathActive = true;
                 
                 double globalVelocity = 1;
-                Rotation2d endDirection = Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach());
+                Rotation2d endDirection = bestAngleToApproachNote();
                 Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
                 //int poseNumOfExtra = 0;
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));
@@ -732,5 +732,9 @@ public class SwerveSubsystem extends SubsystemBase {
         path.preventFlipping =true;
         pathActive = false;
         return path;
+    }
+
+    public Rotation2d bestAngleToApproachNote() {
+        return Rotation2d.fromDegrees(getHeading().getDegrees() + tpuSystem.getBestNoteAngleToApproach());
     }
 }

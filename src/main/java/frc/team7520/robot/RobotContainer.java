@@ -31,8 +31,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.team7520.robot.auto.AutoIntake;
 import frc.team7520.robot.auto.AutoNotePickUp;
+import frc.team7520.robot.auto.AutoNoteSearch;
 import frc.team7520.robot.auto.AutoShoot;
-import frc.team7520.robot.auto.AutoIntake;
+import frc.team7520.robot.auto.AutoTurn;
 import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.commands.AbsoluteDrive;
 import frc.team7520.robot.commands.Climber;
@@ -283,7 +284,7 @@ public class RobotContainer
         
         /* OTF Path Note using sensor feedback */
         new JoystickButton(driverController, XboxController.Button.kB.value).and(intakeSubsystem::getSwitchVal)
-                .onTrue(notePickUp(true));
+                .onTrue(notePickUp(false));
 
         /* If joysticks are moved while a path is in session, the path is overrided */
         new Trigger(() -> SwerveSubsystem.pathActive)
@@ -315,10 +316,10 @@ public class RobotContainer
         new Trigger(() -> !SwerveSubsystem.pathActive && notePathTrigger)
                 .onTrue(
                         new InstantCommand(() -> {notePathTrigger = false;})
-                        //.andThen()
-                        //Turn to face alliance wall command by david
+                        .andThen(new AutoTurn(drivebase, map.getSpeakerCenter().getRotation()))
                         .andThen(new ShootSequence())
-                        //.andThen(notePickUp(true))
+                        .andThen(new AutoNoteSearch(drivebase))
+                        .andThen(notePickUp(true))
                 );
     }
 
@@ -358,27 +359,31 @@ public class RobotContainer
 
     /**
      * Runs OTF path to note and full intake sequence using sensor in parallel
+     * @param chaining a boolean indicating whether the command is used for 15s auto or not
      * @return the command for autoNotePickUp
      */
-    public Command notePickUp(boolean doubleCheck) {
-        if (doubleCheck) {
-                return new InstantCommand(() -> {                        
+    public Command notePickUp(boolean chaining) {
+        if (chaining) {
+                return new AutoTurn(drivebase,  drivebase.bestAngleToApproachNote())
+                .andThen(new InstantCommand(() -> {                        
                         SwerveSubsystem.pathActive = true;
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
                         cmd.schedule();
                         
-                })
+                }))
                 //.onlyIf(intakeSubsystem::getSwitchVal);
                 .finallyDo((boolean interrupted) -> {
                         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                         notePathTrigger = true; 
                 });
         } else {
-                return new InstantCommand(() -> {
+                return new AutoTurn(drivebase,  drivebase.bestAngleToApproachNote())
+                .andThen(new InstantCommand(() -> {                        
+                        SwerveSubsystem.pathActive = true;
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                        cmd.schedule();          
-                        //System.out.println("AGAIN!!!!!!!!");      
-                });
+                        cmd.schedule();
+                        
+                }));
         }
          
     }
