@@ -111,7 +111,7 @@ public class RobotContainer
         configureBindings();
 
         // Left joystick is the angle of the robot
-        /* 
+         
         AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                 // Applies deadbands and inverts controls because joysticks
                 // are back-right positive while robot
@@ -126,7 +126,7 @@ public class RobotContainer
                 driverController::getLeftBumper,
                 () -> driverController.getXButton()
         );
-*/
+
         //  shooter = new Shooter(shooterSubsystem,
         //         operatorController::getLeftX, // <-->
         //         operatorController::getRightY, //pivot
@@ -155,7 +155,7 @@ public class RobotContainer
                         OperatorConstants.LEFT_X_DEADBAND),
                 () -> driverController.getRawAxis(2), () -> true);
 
-        //drivebase.setDefaultCommand(closedAbsoluteDrive);
+        drivebase.setDefaultCommand(closedAbsoluteDrive);
 //        ampSubsystem.setDefaultCommand(amp);
         //shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
