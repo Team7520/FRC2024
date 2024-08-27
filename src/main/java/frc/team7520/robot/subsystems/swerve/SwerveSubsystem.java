@@ -629,7 +629,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 pathActive = true;
                 
                 double globalVelocity = 1;
-                Rotation2d endDirection = (bestAngleToApproachNote());
+                //Rotation2d endDirection = (bestAngleToApproachNote());
+                Rotation2d endDirection = getHeading();
                 Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
                 //int poseNumOfExtra = 0;
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));
@@ -653,7 +654,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 List<EventMarker> lst_em = Arrays.asList(em, em3, em4, signalEnd);
 
                 RotationTarget rt = new RotationTarget(0, endDirection);
-                List<RotationTarget> lst_rt = Arrays.asList(rt);
+                List<RotationTarget> lst_rt = Arrays.asList();
                 
                 //ConstraintsZone cz = new ConstraintsZone(0.3, 0.6, new PathConstraints(0.05, 0.5, 0.5 * Math.PI, 0.5 * Math.PI));
                 List<ConstraintsZone> lst_cz = Arrays.asList();

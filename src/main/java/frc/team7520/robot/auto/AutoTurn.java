@@ -43,7 +43,13 @@ public class AutoTurn extends Command {
         if (mode == 0) {
             this.desiredheading = swerve.bestAngleToApproachNote();
             speedConstant = 3;
-        } 
+        } else if (mode == 1) {
+            if (swerve.getHeading().getDegrees() < 0 && desiredheading.getDegrees() == 180) {
+                desiredheading = Rotation2d.fromDegrees(-180);
+            } else if (swerve.getHeading().getDegrees() > 0 && desiredheading.getDegrees() == -180) {
+                desiredheading = Rotation2d.fromDegrees(180);
+            }
+        }
         //intakeSubsystem.setPosition(Position.SHOOT);
         //intakeSubsystem.setSpeed(0);
     
@@ -53,7 +59,24 @@ public class AutoTurn extends Command {
 
     @Override
     public void execute() {
+        double heading = swerve.getHeading().getDegrees();
         Rotation2d difference = desiredheading.minus(swerve.getHeading());
+        // if (difference.getDegrees() > 180) {
+        //     desiredheading = Rotation2d.fromDegrees(desiredheading.getDegrees() - 360);
+        // } else if (difference.getDegrees() < -180) {
+        //     desiredheading = Rotation2d.fromDegrees(desiredheading.getDegrees() + 360);
+        // }
+        if(desiredheading.getDegrees() > 180) {
+            if (heading < desiredheading.getDegrees()-180) {
+                desiredheading = new Rotation2d().plus(desiredheading);
+            }
+        } else if (desiredheading.getDegrees() < -180) {
+            if (heading > desiredheading.getDegrees()+180) {
+                desiredheading = new Rotation2d().plus(desiredheading);
+            }
+        }
+        System.out.println("DesiredHeading: " + desiredheading.getDegrees());  
+        difference = desiredheading.minus(swerve.getHeading());
         double turnSpeed = difference.getRadians()*speedConstant;
         //System.out.println("Desired location Execute: " + desiredheading);
         swerve.drive(new Translation2d(0,0), turnSpeed, true);
@@ -98,8 +121,8 @@ public class AutoTurn extends Command {
     @Override
     public boolean isFinished() {
         
-        System.out.println("Difference: " + Math.abs((new Rotation2d()).plus(desiredheading).getDegrees()-swerve.getHeading().getDegrees()));
-        return Math.abs((new Rotation2d()).plus(desiredheading).getDegrees()-swerve.getHeading().getDegrees()) < 8;
+        //System.out.println("Difference: " + Math.abs(desiredheading.getDegrees()-swerve.getHeading().getDegrees()));
+        return Math.abs(desiredheading.getDegrees()-swerve.getHeading().getDegrees()) < 7;
         
     }
 
@@ -107,6 +130,7 @@ public class AutoTurn extends Command {
     @Override
     public void end(boolean interrupted) {
         
+        swerve.drive(new Translation2d(0,0), 0, true);
         //System.out.println("End Direction Reached");
     }
 }

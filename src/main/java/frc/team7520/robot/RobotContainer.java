@@ -286,7 +286,7 @@ public class RobotContainer
         
         /* OTF Path Note using sensor feedback */
         new JoystickButton(driverController, XboxController.Button.kB.value).and(intakeSubsystem::getSwitchVal)
-                .onTrue(notePickUp(true));
+                .onTrue(notePickUp(false));
 
         /* If joysticks are moved while a path is in session, the path is overrided */
         new Trigger(() -> SwerveSubsystem.pathActive)
@@ -368,17 +368,19 @@ public class RobotContainer
      */
     public Command notePickUp(boolean chaining) {
         if (chaining) {
-                return new AutoTurn(drivebase, 0, null);
-                // .andThen(new InstantCommand(() -> {                        
-                //         SwerveSubsystem.pathActive = true;
-                //         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
-                //         cmd.schedule();
-                // }).finallyDo((boolean interrupted) -> {
-                //         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                //         notePathTrigger = true; 
-                // }));
+                return new AutoTurn(drivebase, 0, null)
+                .andThen(new WaitCommand(0.2)) //to give tpu time to get accurate average of note
+                .andThen(new InstantCommand(() -> {                        
+                        SwerveSubsystem.pathActive = true;
+                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
+                        cmd.schedule();
+                }).finallyDo((boolean interrupted) -> {
+                        //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        notePathTrigger = true; 
+                }));
         } else {
                 return new AutoTurn(drivebase,  0, null)
+                .andThen(new WaitCommand(0.2))
                 .andThen(new InstantCommand(() -> {                        
                         SwerveSubsystem.pathActive = true;
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
