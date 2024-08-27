@@ -309,7 +309,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("ROBOT POSE Y", getPose().getY());
         SmartDashboard.putNumber("Current Pose Angle", getPose().getRotation().getDegrees());
         aprilTagSystem.periodic(getPose());
-        System.out.println(pathActive);
+        //System.out.println(pathActive);
+        //System.out.println("Angle: " + bestAngleToApproachNote().getDegrees());
 
         /** Note Detection Stuff */
         tpuSystem.periodic();
@@ -628,7 +629,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 pathActive = true;
                 
                 double globalVelocity = 1;
-                Rotation2d endDirection = bestAngleToApproachNote();
+                Rotation2d endDirection = (bestAngleToApproachNote());
                 Pose2d startPose = new Pose2d(getPose().getTranslation(), endDirection);
                 //int poseNumOfExtra = 0;
                 //System.out.println(Math.abs(notePose.getDistance(getPose().getTranslation())));

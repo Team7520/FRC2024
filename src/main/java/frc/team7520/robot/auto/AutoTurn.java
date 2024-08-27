@@ -1,43 +1,61 @@
 package frc.team7520.robot.auto;
 
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.team7520.robot.Constants.IntakeConstants.Position;
+import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 
 
 public class AutoTurn extends Command {
     private final SwerveSubsystem swerve;
-    private final Rotation2d desiredheading;
+    
+    //private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
+    private Rotation2d desiredheading;
+    int mode;
+    private  double speedConstant = 2;
+    private final static double BASE_SPEED = Math.PI/4;
 
-
-    public AutoTurn(SwerveSubsystem swerve, Rotation2d desiredheading) {
+    /** 
+     * @param swerve the swerve Subsystem
+     * @param desiredheading the desired direction in degrees
+     */
+    public AutoTurn(SwerveSubsystem swerve, int mode, Rotation2d desiredheading) {
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         this.swerve = swerve;
-        this.desiredheading = desiredheading;
+        this.mode = mode;
+        this.desiredheading = desiredheading; 
         addRequirements(swerve);
+        //addRequirements(intakeSubsystem);
         
 
     }
 
     @Override
     public void initialize() {
-        
+        if (mode == 0) {
+            this.desiredheading = swerve.bestAngleToApproachNote();
+            speedConstant = 3;
+        } 
+        //intakeSubsystem.setPosition(Position.SHOOT);
+        //intakeSubsystem.setSpeed(0);
+    
+        //System.out.println("Desired location Initialize: " + desiredheading);
 
     }
 
     @Override
     public void execute() {
-        Rotation2d currentHeadingRotation2d = swerve.getHeading();
-        Rotation2d desiredHeadingRotation2d = (new Rotation2d()).plus(desiredheading);
-        double speedConstant = 0.06;
-        Rotation2d difference = desiredHeadingRotation2d.minus(currentHeadingRotation2d);
-        double turnSpeed = (difference.getDegrees())*speedConstant;
+        Rotation2d difference = desiredheading.minus(swerve.getHeading());
+        double turnSpeed = difference.getRadians()*speedConstant;
+        //System.out.println("Desired location Execute: " + desiredheading);
         swerve.drive(new Translation2d(0,0), turnSpeed, true);
 
         // double currentHeadingDeg = swerve.getHeading().getDegrees();
@@ -79,12 +97,16 @@ public class AutoTurn extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs((new Rotation2d()).plus(desiredheading).getDegrees()-swerve.getHeading().getDegrees())>3;
+        
+        System.out.println("Difference: " + Math.abs((new Rotation2d()).plus(desiredheading).getDegrees()-swerve.getHeading().getDegrees()));
+        return Math.abs((new Rotation2d()).plus(desiredheading).getDegrees()-swerve.getHeading().getDegrees()) < 8;
+        
     }
 
 
     @Override
     public void end(boolean interrupted) {
-
+        
+        //System.out.println("End Direction Reached");
     }
 }

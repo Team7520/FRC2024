@@ -31,7 +31,7 @@ public class AutoNoteSearch extends Command {
 
     @Override
     public void execute() {
-        swerve.drive(new Translation2d(0,0), Math.PI, true);
+        swerve.drive(new Translation2d(0,0), Math.PI/6, true);
 
         // double currentHeadingDeg = swerve.getHeading().getDegrees();
         // double desiredHeadingDeg = desiredheading.getDegrees();
