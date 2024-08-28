@@ -37,20 +37,20 @@ public class Map {
      * 
      * ** Keep in mind that intake is the head! **
      */
-    private Pose2d redSpeakerCenter = new Pose2d(15.2, 5.55, new Rotation2d(Math.toRadians(180)));
-    private Pose2d redSpeakerSourceSide = new Pose2d(15.8, 4.3, new Rotation2d(Math.toRadians(-120)));
-    private Pose2d redSpeakerAmpSide = new Pose2d(15.8, 6.8, new Rotation2d(Math.toRadians(120)));
+    private Pose2d redSpeakerCenter = new Pose2d(15.2, 5.55, new Rotation2d(Math.toRadians(180))); //15.2, 55.5
+    private Pose2d redSpeakerSourceSide = new Pose2d(16, 4.35, new Rotation2d(Math.toRadians(-120)));
+    private Pose2d redSpeakerAmpSide = new Pose2d(16, 6.8, new Rotation2d(Math.toRadians(120)));
 
-    private Pose2d redAmp = new Pose2d(14.7, 7.77, new Rotation2d(Math.toRadians(90)));
-    private Pose2d redSource = new Pose2d(1.34, 0.56, new Rotation2d(Math.toRadians(60)));
+    private Pose2d redAmp = new Pose2d(14.7, 7.77, new Rotation2d(Math.toRadians(-90)));
+    private Pose2d redSource = new Pose2d(1.34, 1.4, new Rotation2d(Math.toRadians(60)));
     private Pose2d redUnderStage = new Pose2d(4.98, 4.1, new Rotation2d(Math.toRadians(0)));
 
-    private Pose2d blueSpeakerCenter = new Pose2d(1.3, 5.55, new Rotation2d(0));
-    private Pose2d blueSpeakerSourceSide = new Pose2d(0.7, 4.3, new Rotation2d(Math.toRadians(-60)));
-    private Pose2d blueSpeakerAmpSide = new Pose2d(0.7, 6.8, new Rotation2d(Math.toRadians(60)));
+    private Pose2d blueSpeakerCenter = new Pose2d(1.4, 5.55, new Rotation2d(0));
+    private Pose2d blueSpeakerSourceSide = new Pose2d(0.6, 4.35, new Rotation2d(Math.toRadians(-60)));
+    private Pose2d blueSpeakerAmpSide = new Pose2d(0.6, 6.8, new Rotation2d(Math.toRadians(60)));
     
-    private Pose2d blueAmp = new Pose2d(1.8, 7.77, new Rotation2d(Math.toRadians(90)));
-    private Pose2d blueSource = new Pose2d(16.06, 0.56, new Rotation2d(Math.toRadians(120)));
+    private Pose2d blueAmp = new Pose2d(1.8, 7.77, new Rotation2d(Math.toRadians(-90)));
+    private Pose2d blueSource = new Pose2d(16.06, 1.4, new Rotation2d(Math.toRadians(120)));
     private Pose2d blueUnderStage = new Pose2d(11.56, 4.1, new Rotation2d(Math.toRadians(0)));
 
     private Pose2d centerNoteSource = new Pose2d(8.27, 0.75, new Rotation2d(Math.toRadians(0)));
@@ -59,7 +59,8 @@ public class Map {
     private Pose2d centerNoteAM = new Pose2d(8.27, 5.78, new Rotation2d(Math.toRadians(0)));
     private Pose2d centerNoteAmp = new Pose2d(8.27, 7.46, new Rotation2d(Math.toRadians(0)));
 
-
+    private Pose2d redAutoChaining = new Pose2d(10.66, 1.4, Rotation2d.fromDegrees(180));
+    private Pose2d blueAutoChaining = new Pose2d(6.3, 1.4, Rotation2d.fromDegrees(0));
     
     /* 
     final private Pose2d AT1 = new Pose2d(new Translation2d(15.079472, 0.245872), new Rotation2d(Math.toRadians(120))); // B SOURCE 
@@ -106,28 +107,41 @@ public class Map {
     }
 
     /**
-     * Gets the source side shooting Pose2d at the speaker. Location depends the alliance set.
+     * Gets the right side shooting Pose2d at the speaker, where right is relative to the driver. Location depends the alliance set.
      * @return a Pose2d
      */
-    public Pose2d getSpeakerSourceSide() {
+    public Pose2d getSpeakerRightSide() {
         if (SwerveSubsystem.isBlueAlliance) {
             return blueSpeakerSourceSide;
+        } else {
+            return redSpeakerAmpSide;
+        }
+    }
+
+    /**
+     * Gets the left side shooting Pose2d at the speaker, where left is relative to the driver. Location depends the alliance set.
+     * @return a Pose2d
+     */
+    public Pose2d getSpeakerLeftSide() {
+        if (SwerveSubsystem.isBlueAlliance) {
+            return blueSpeakerAmpSide;
         } else {
             return redSpeakerSourceSide;
         }
     }
 
     /**
-     * Gets the amp side shooting Pose2d at the speaker. Location depends the alliance set.
+     * Gets the 15s auto position used for chaining: grabbing notes from center and shooting them back to alliance.
      * @return a Pose2d
      */
-    public Pose2d getSpeakerAmpSide() {
+    public Pose2d getAutoChaining() {
         if (SwerveSubsystem.isBlueAlliance) {
-            return blueSpeakerAmpSide;
+            return blueAutoChaining;
         } else {
-            return redSpeakerAmpSide;
+            return redAutoChaining;
         }
     }
+
 
     /**
      * Gets the amp Pose2d. Location depends the alliance set.

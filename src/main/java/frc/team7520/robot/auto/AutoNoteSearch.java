@@ -6,12 +6,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.team7520.robot.Constants;
+import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 
 
 public class AutoNoteSearch extends Command {
     private final SwerveSubsystem swerve;
+    private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
 
 
     public AutoNoteSearch(SwerveSubsystem swerve) {
@@ -19,19 +22,21 @@ public class AutoNoteSearch extends Command {
         // addRequirements() method (which takes a vararg of Subsystem)
         this.swerve = swerve;
         addRequirements(swerve);
+        addRequirements(intakeSubsystem);
         
 
     }
 
     @Override
     public void initialize() {
-        
+        intakeSubsystem.setPosition(Constants.IntakeConstants.Position.SHOOT);
+        intakeSubsystem.setSpeed(0);
 
     }
 
     @Override
     public void execute() {
-        swerve.drive(new Translation2d(0,0), Math.PI/6, true);
+        swerve.drive(new Translation2d(0,0), Math.PI/3, true);
 
         // double currentHeadingDeg = swerve.getHeading().getDegrees();
         // double desiredHeadingDeg = desiredheading.getDegrees();

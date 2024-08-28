@@ -1,6 +1,7 @@
 package frc.team7520.robot.commands;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import javax.lang.model.util.ElementScanner14;
 import javax.lang.model.util.SimpleElementVisitor14;
@@ -16,6 +17,9 @@ import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 public class AutoClimber extends Command {
     private final ClimberSubsystem subsystem;
     private BooleanSupplier bActionButtonClicked;
+    private DoubleSupplier leftY;
+    private DoubleSupplier rightY;
+    private BooleanSupplier backButton;
 
     enum State {
         NOTHING,
@@ -27,16 +31,19 @@ public class AutoClimber extends Command {
     private State prevState = State.RETRACT;
 
 
-    public AutoClimber(ClimberSubsystem climberSubsystem, BooleanSupplier actionButtonClicked) {
+    public AutoClimber(ClimberSubsystem climberSubsystem, BooleanSupplier actionButtonClicked, DoubleSupplier leftY, DoubleSupplier rightY, BooleanSupplier backButton) {
         this.subsystem = climberSubsystem;
         this.bActionButtonClicked = actionButtonClicked;
         this.curState = State.NOTHING;
         this.prevState = State.RETRACT;
         subsystem.setZeroPos();
-
+        this.leftY = leftY;
+        this.rightY = rightY;
+        this.backButton = backButton;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(climberSubsystem);
     }
+
 
     @Override
     public void initialize() {
@@ -79,8 +86,19 @@ int clickCount = 0;
 
     void Stop()
     {
-        subsystem.setLeftSpeed(0);
-        subsystem.setRightSpeed(0);
+        if (Math.abs(leftY.getAsDouble()) > 0.1 || Math.abs(rightY.getAsDouble()) > 0.1) {
+            
+        subsystem.setLeftSpeed(leftY.getAsDouble());
+        subsystem.setRightSpeed(rightY.getAsDouble());
+        } else {
+            
+            subsystem.setLeftSpeed(0);
+            subsystem.setRightSpeed(0);
+        }
+
+        if (backButton.getAsBoolean()) {
+            subsystem.setZeroPos();
+        }
         this.curState = State.NOTHING;
     }
 
@@ -92,8 +110,8 @@ int clickCount = 0;
         SmartDashboard.putNumber("Climber Left Position", leftPosition);
         SmartDashboard.putNumber("Climber Right Position", rightPosition);
 
-        subsystem.setLeftArmReference(0);
-        subsystem.setRightArmReference(-0);
+        // subsystem.setLeftArmReference(0);
+        // subsystem.setRightArmReference(-0);
 
         Boolean leftStopped = false;
         Boolean rightStopped = false;
@@ -108,9 +126,9 @@ int clickCount = 0;
             leftStopped = true;
         }
 
-        if (rightPosition < 0)
+        if (rightPosition > 0)
         {
-            subsystem.setRightSpeed(0.5);
+            subsystem.setRightSpeed(-0.5);
         }
         else
         {
@@ -134,8 +152,8 @@ int clickCount = 0;
         SmartDashboard.putNumber("Climber Left Position", leftPosition);
         SmartDashboard.putNumber("Climber Right Position", rightPosition);
 
-        subsystem.setLeftArmReference(ClimberConstants.maxPosition);
-        subsystem.setRightArmReference(-ClimberConstants.maxPosition);
+        // subsystem.setLeftArmReference(ClimberConstants.maxPosition);
+        // subsystem.setRightArmReference(-ClimberConstants.maxPosition);
 
         Boolean leftStopped = false;
         Boolean rightStopped = false;
@@ -150,9 +168,9 @@ int clickCount = 0;
             leftStopped = true;
         }
 
-        if (rightPosition > -ClimberConstants.maxPosition)
+        if (rightPosition < ClimberConstants.maxPosition)
         {
-            subsystem.setRightSpeed(-0.5);
+            subsystem.setRightSpeed(0.5);
         }
         else
         {

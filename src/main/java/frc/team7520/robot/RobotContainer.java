@@ -84,6 +84,7 @@ public class RobotContainer
         public final static Map map = new Map();
 
         private boolean notePathTrigger = false;
+        private boolean chainingPathTrigger = false;
 
 
     // Subsystems
@@ -156,16 +157,21 @@ public class RobotContainer
         );
 
 
-        Climber climber = new Climber(climberSubsystem,
-                driverController::getYButton,
-                driverController::getYButton,
-                operatorController::getStartButton, //Start button not used
-                operatorController::getRightY,
-                operatorController::getLeftY,
-                operatorController::getBackButton
-        );
+        // Climber climber = new Climber(climberSubsystem,
+        //         driverController::getYButton,
+        //         driverController::getYButton,
+        //         operatorController::getStartButton, //Start button not used
+        //         operatorController::getRightY,
+        //         operatorController::getLeftY,
+        //         operatorController::getBackButton
+        // );
 
-        //AutoClimber climberAutomatic = new AutoClimber(climberSubsystem, operatorController::getYButtonReleased);
+        AutoClimber climber = new AutoClimber(climberSubsystem, 
+                driverController::getYButtonReleased, 
+                operatorController::getLeftY, 
+                operatorController::getRightY,
+                operatorController::getBackButton
+                );
       
         // Intake intake = new Intake(intakeSubsystem,
         //         operatorController::getRightBumper,
@@ -302,11 +308,13 @@ public class RobotContainer
         new Trigger(() -> driverController.getPOV() == 0)
                 .onTrue(centralSpeakerShot());
 
-        new Trigger(() -> driverController.getPOV() == 90)
-                .onTrue((SwerveSubsystem.isBlueAlliance ? sourceSpeakerShot() : ampSpeakerShot()));
-        
         new Trigger(() -> driverController.getPOV() == 270)
-                .onTrue((SwerveSubsystem.isBlueAlliance ? ampSpeakerShot() : sourceSpeakerShot()));
+                .onTrue(leftSpeakerShot());
+        
+        new Trigger(() -> driverController.getPOV() == 90)
+                .onTrue(rightSpeakerShot());
+        new Trigger(() -> driverController.getPOV() == 180)
+                .onTrue(ampShot());
 
         new Trigger(() -> speakerRoutineActivateShooter)
                 .onTrue(new ParallelCommandGroup(
@@ -318,12 +326,16 @@ public class RobotContainer
         new Trigger(() -> !SwerveSubsystem.pathActive && notePathTrigger)
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> {notePathTrigger = false;}),
-                        new ParallelCommandGroup(
-                                new AutoTurn(drivebase, 1, map.getSpeakerCenter().getRotation()),
-                                new ShootSequence()
-                        )
-                        //new AutoNoteSearch(drivebase),
-                        //notePickUp(true)
+                        new AutoNoteSearch(drivebase).onlyIf(intakeSubsystem::getSwitchVal),
+                        notePickUp(true).onlyIf(intakeSubsystem::getSwitchVal)
+                        //autoChaining()
+                ));
+
+        new Trigger(() -> !SwerveSubsystem.pathActive && chainingPathTrigger)
+                .onTrue(new SequentialCommandGroup(
+                        new InstantCommand(() -> {chainingPathTrigger = false;}),
+                        new WaitCommand(0.5),
+                        notePickUp(true)
                 ));
     }
 
@@ -334,20 +346,30 @@ public class RobotContainer
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
+        if (autoChooser.getSelected().getName().equals("test")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
+                return new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                                autoChooser.getSelected()
+                        ),
+                        notePickUp(true)
+                ).finallyDo((boolean interupted) -> {
+                        shooterSubsystem.setDefaultCommand(shooter);
+                });     
+        } else {
+                return new SequentialCommandGroup(
+                        new ParallelDeadlineGroup(
+                                autoChooser.getSelected()
+                                //new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new AutoShoot(0.7, false)))
+                                
+                        ),
+                        new InstantCommand(() -> new AutoShoot(0, false)),
+                        new InstantCommand(() -> shooterSubsystem.setDefaultCommand(shooter))
+                ).finallyDo((boolean interupted) -> {
+                        shooterSubsystem.setDefaultCommand(shooter);
+                });
+        }
         
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new AutoShoot(0.7, false))),
-                        autoChooser.getSelected()
-                ),
-                new InstantCommand(() -> shooterSubsystem.setDefaultCommand(shooter))
-        ).finallyDo((boolean interupted) -> {
-            if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
-                drivebase.setGyro(drivebase.getHeading().minus(Rotation2d.fromDegrees(180)));
-            }
-
-            shooterSubsystem.setDefaultCommand(shooter);
-        });
+        
         
         /* 
         //Robin's 1m Path Test 
@@ -408,33 +430,73 @@ public class RobotContainer
     }
 
     /**
-     * Runs OTF path to amp side speaker position and shoot sequence, timed
+     * Runs OTF path to left side speaker position and shoot sequence, timed
      * @return
      */
-    public Command ampSpeakerShot() {
+    public Command leftSpeakerShot() {
                 return new InstantCommand(() -> {
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
                                 1, 
-                                map.getSpeakerAmpSide(), 
-                                new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getSpeakerAmpSide().getRotation().getRadians() + Math.PI))
+                                map.getSpeakerLeftSide(), 
+                                new Rotation2d(map.getSpeakerLeftSide().getRotation().getRadians() + Math.PI), 
+                                new Rotation2d(map.getSpeakerLeftSide().getRotation().getRadians() + Math.PI))
                         );
                         cmd.schedule();                
                 });
     }
+
+
     /**
-     * Runs OTF path to source side speaker position and shoot sequence, timed
+     * Runs OTF path to right side speaker position and shoot sequence, timed
      * @return
      */
-    public Command sourceSpeakerShot() {
+    public Command rightSpeakerShot() {
                 return new InstantCommand(() -> {
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
                                 1, 
-                                map.getSpeakerSourceSide(), 
-                                new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getSpeakerSourceSide().getRotation().getRadians() + Math.PI))
+                                map.getSpeakerRightSide(), 
+                                new Rotation2d(map.getSpeakerRightSide().getRotation().getRadians() + Math.PI), 
+                                new Rotation2d(map.getSpeakerRightSide().getRotation().getRadians() + Math.PI))
                         );
                         cmd.schedule();                
+                });
+    }
+
+    /**
+     * Runs the OTF path to the amp
+     * @return
+     */
+    public Command ampShot() {
+        return new InstantCommand(() -> {
+                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
+                                1, 
+                                map.getAmp(), 
+                                new Rotation2d(map.getAmp().getRotation().getRadians() + Math.PI), 
+                                new Rotation2d(map.getAmp().getRotation().getRadians() + Math.PI))
+                        );
+                        cmd.schedule();                
+                });
+    }
+
+    /**
+     * Path used in 15s auto chaining for returning shots to alliance
+     * @return
+     */
+    public Command autoChaining() {
+                return new InstantCommand(() -> {
+                        SwerveSubsystem.pathActive = true;
+                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
+                                1, 
+                                map.getAutoChaining(), 
+                                new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI), 
+                                new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI))
+                                // map.getSpeakerCenter(), 
+                                // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI), 
+                                // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI))
+                        );
+                        cmd.schedule();                
+                }).finallyDo((boolean interrupted) -> {
+                        chainingPathTrigger = true;
                 });
     }
 

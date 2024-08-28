@@ -50,8 +50,7 @@ public class AutoTurn extends Command {
                 desiredheading = Rotation2d.fromDegrees(180);
             }
         }
-        //intakeSubsystem.setPosition(Position.SHOOT);
-        //intakeSubsystem.setSpeed(0);
+        
     
         //System.out.println("Desired location Initialize: " + desiredheading);
 
