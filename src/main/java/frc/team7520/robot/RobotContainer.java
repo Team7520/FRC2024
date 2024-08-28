@@ -347,7 +347,7 @@ public class RobotContainer
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        if (autoChooser.getSelected().getName().equals("test")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
+        if (autoChooser.getSelected().getName().equals("2MiddleWithAT")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
                 return new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 autoChooser.getSelected()
