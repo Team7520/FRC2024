@@ -51,19 +51,23 @@ public class AutoShoot extends Command {
 
     public void pivotPosition() {
         if (restSup.getAsBoolean()) {
-            shooterSubsystem.setPosition(Constants.ShooterConstants.Position.REST);
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.REST);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.REST);
             return;
         }
         if (subwooferPosSup.getAsBoolean()) {
-            shooterSubsystem.setPosition(Constants.ShooterConstants.Position.SUBWOOFER);
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFER);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFER);
             return;
         }
         if (wingLingPosSup.getAsBoolean()) {
-            shooterSubsystem.setPosition(Constants.ShooterConstants.Position.WINGLINE);
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.WINGLINE);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.WINGLINE);
             return;
         }
         if (podiumPosSup.getAsBoolean()) {
-            shooterSubsystem.setPosition(Constants.ShooterConstants.Position.PODIUM);
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUM);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUM);
             return;
         }
 

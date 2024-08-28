@@ -4,6 +4,8 @@
 
 package frc.team7520.robot;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -112,19 +114,18 @@ public final class Constants {
         public static final double MAX_RPM = 5676;
 
         public enum Position {
-            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(0), 0), //DO NOT CHANGE
-            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(0), 1), // 51
-            WINGLINE(new Rotation2d(0), new Rotation2d(0), 1),
-            PODIUM(new Rotation2d(0), new Rotation2d(0), 1);
+            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(0)), //DO NOT CHANGE
+            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(Math.toRadians(30))),
+            // SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(0)),
+            WINGLINE(new Rotation2d(0), new Rotation2d(0)),
+            PODIUM(new Rotation2d(0), new Rotation2d(0));
 
             Rotation2d pivot;
             Rotation2d traverse;
-            double speed;
 
-            Position(Rotation2d pivot, Rotation2d traverse, double speed) {
+            Position(Rotation2d pivot, Rotation2d traverse) {
                 this.pivot = pivot;
                 this.traverse = traverse;
-                this.speed = speed;
             }
 
             public Rotation2d getPivot() {
@@ -134,10 +135,6 @@ public final class Constants {
             public Rotation2d getTraverse() {
                 return traverse;
             }
-
-            public double getSpeed() {
-                return speed;
-            }
         }
 
         public static class PivotConstants {
@@ -145,6 +142,7 @@ public final class Constants {
 
             public static final double gearRatio = 80.0/3;
             public static final double degreeConversionFactor = 1/gearRatio;
+            public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
             public static final double kP = 0.65;
             public static final double kI = 0;
             public static final double kD = 0;
@@ -160,6 +158,21 @@ public final class Constants {
 
         public static class TraverseConstants {
             public static final int CAN_ID = 16;
+
+            public static final double gearRatio = 80/7;
+            public static final double degreeConversionFactor = 1/gearRatio;
+            public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
+            public static final double kP = 0.3;
+            public static final double kI = 0;
+            public static final double kD = 0;
+            public static final double kG = 0;
+            public static final double kS = 0;
+            public static final double kV = 0;
+            public static final double kA = 0;
+
+            public static final double motionMagicVelocity = 100;
+            public static final double motionMagicAccel = 200;
+            public static final double motionMagicJerk = 750;
         }
     }
 
