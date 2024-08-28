@@ -205,6 +205,7 @@ public class RobotContainer
 
         registerNamedCommands();
 
+        autoChooser.setDefaultOption("2middleWithAt", drivebase.getPPAutoCommand("2MiddleWithAT", true));
         autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("safe", true));
         autoChooser.addOption("Amp", drivebase.getPPAutoCommand("Amp", true));
         autoChooser.addOption("Test", drivebase.getPPAutoCommand("test", true));
