@@ -103,9 +103,7 @@ public final class Constants {
     public static class ShooterConstants {
         public static final int shooterBotID = 20;
         public static final int shooterTopID = 19;
-        public static final int pivotID = 21; //negative spin direction make pivot go upwards
         public static final int ampMechID = 25;
-        public static final int traverseID = 16;
         public static final double kP = 0.002;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
@@ -113,8 +111,56 @@ public final class Constants {
 
         public static final double MAX_RPM = 5676;
 
+        public enum Position {
+            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(0), 0), //DO NOT CHANGE
+            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(0), 1), // 51
+            WINGLINE(new Rotation2d(0), new Rotation2d(0), 1),
+            PODIUM(new Rotation2d(0), new Rotation2d(0), 1);
 
+            Rotation2d pivot;
+            Rotation2d traverse;
+            double speed;
 
+            Position(Rotation2d pivot, Rotation2d traverse, double speed) {
+                this.pivot = pivot;
+                this.traverse = traverse;
+                this.speed = speed;
+            }
+
+            public Rotation2d getPivot() {
+                return pivot;
+            }
+
+            public Rotation2d getTraverse() {
+                return traverse;
+            }
+
+            public double getSpeed() {
+                return speed;
+            }
+        }
+
+        public static class PivotConstants {
+            public static final int CAN_ID = 21;
+
+            public static final double gearRatio = 80.0/3;
+            public static final double degreeConversionFactor = 1/gearRatio;
+            public static final double kP = 0.65;
+            public static final double kI = 0;
+            public static final double kD = 0;
+            public static final double kG = 0;
+            public static final double kS = 0;
+            public static final double kV = 0;
+            public static final double kA = 0;
+
+            public static final double motionMagicVelocity = 450;
+            public static final double motionMagicAccel = 800;
+            public static final double motionMagicJerk = 2000;
+        }
+
+        public static class TraverseConstants {
+            public static final int CAN_ID = 16;
+        }
     }
 
     public static class ClimberConstants {

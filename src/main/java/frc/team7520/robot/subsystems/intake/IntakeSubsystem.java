@@ -17,21 +17,22 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
 import frc.team7520.robot.Constants.IntakeConstants;
+import frc.team7520.robot.Constants.ShooterConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    //public CANSparkMax pivot = new CANSparkMax(IntakeConstants.PivotConstants.CAN_ID, MotorType.kBrushless);
     public TalonFX TopMotor = new TalonFX(IntakeConstants.WheelConstants.IntakeTopID);
     public TalonFX BotMotor = new TalonFX(IntakeConstants.WheelConstants.IntakeBottomID);
-    // public TalonFX RingOneMotor = new TalonFX(IntakeConstants.WheelConstants.RingOneID);
-    // public TalonFX RingTwoMotor = new TalonFX(IntakeConstants.WheelConstants.RingTwoID);
-    // public TalonFX FeederMotor = new TalonFX(IntakeConstants.WheelConstants.FeederID);
+    public TalonFX RingOneMotor = new TalonFX(IntakeConstants.WheelConstants.RingOneID);
+    public TalonFX RingTwoMotor = new TalonFX(IntakeConstants.WheelConstants.RingTwoID);
+    public TalonFX FeederMotor = new TalonFX(IntakeConstants.WheelConstants.FeederID);
     
-    //private final DigitalInput input = new DigitalInput(0);
+    // private final DigitalInput input = new DigitalInput(0);
 
     private final SlewRateLimiter slewRateLimiter = new SlewRateLimiter(5);
 
@@ -46,10 +47,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /** Creates a new ExampleSubsystem. */
     private IntakeSubsystem() {
-
         BotMotor.setInverted(true);
-        //RingOneMotor.setInverted(false);
-        //FeederMotor.setInverted(true);
+        RingOneMotor.setInverted(false);
+        FeederMotor.setInverted(true);
     }
 
 
@@ -68,27 +68,16 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setRingSpeed(double speed){
-        // RingOneMotor.set(speed);
-        // RingTwoMotor.set(speed);
+        RingOneMotor.set(speed);
+        RingTwoMotor.set(speed);
     }
 
     public void setFeederSpeed(double speed){
-        //FeederMotor.set(speed);
+        FeederMotor.set(speed);
     }
 
     // public boolean getSwitchVal() {
     //     return input.get();
     // }
-
-
-    @Override
-    public void periodic() {
-        // SmartDashboard.putNumber("pivotEncoder", pivotEncoder.getPosition());
-        // SmartDashboard.putNumber("DesiredDeg", desiredPosition.getDegrees());
-        // SmartDashboard.putNumber("DesiredRot", desiredPosition.getRotations());
-        // SmartDashboard.putNumber("diffedEncoder", getDiffedEncoder());
-        // SmartDashboard.putNumber("PivotAbsEncoder", pivotAbsEncoder.get());
-        // SmartDashboard.putNumber("wheelsAbsEncoder", wheelAbsEncoder.get());
-    }
 
 }

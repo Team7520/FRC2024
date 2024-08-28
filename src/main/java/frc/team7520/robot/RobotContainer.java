@@ -33,6 +33,7 @@ import frc.team7520.robot.commands.Sensor;
 import frc.team7520.robot.commands.Shooter;
 
 import frc.team7520.robot.commands.Amp;
+import frc.team7520.robot.commands.AutoShoot;
 import frc.team7520.robot.commands.TeleopDrive;
 //import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 import frc.team7520.robot.subsystems.LED;
@@ -58,7 +59,7 @@ public class RobotContainer
     private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
             "swerve/neo"));
 
-    //private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
+    private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
     private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
 
@@ -99,6 +100,14 @@ public class RobotContainer
         sensorSubsystem::getColorSensorProximity
         );
 
+    private final AutoShoot autoShoot = new AutoShoot(shooterSubsystem, 
+        operatorController::getRightBumper,
+        operatorController::getYButton, 
+        () -> false,
+        () -> false,
+        operatorController::getLeftTriggerAxis
+        );
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
     {
@@ -127,12 +136,12 @@ public class RobotContainer
                 () -> driverController.getXButton()
         );
 
-        //  shooter = new Shooter(shooterSubsystem,
-        //         operatorController::getLeftX, // <-->
-        //         operatorController::getRightY, //pivot
-        //         operatorController::getLeftTriggerAxis, // spin up shooter
-        //         operatorController::getXButton
-        //  );
+        // shooter = new Shooter(shooterSubsystem,
+        //        operatorController::getLeftX, // <-->
+        //        operatorController::getRightY, //pivot
+        //        operatorController::getLeftTriggerAxis, // spin up shooter
+        //        operatorController::getXButton
+        // );
 
         // Intake intake = new Intake(intakeSubsystem,
         //         () -> operatorController.getAButton()
@@ -158,6 +167,7 @@ public class RobotContainer
         drivebase.setDefaultCommand(closedAbsoluteDrive);
 //        ampSubsystem.setDefaultCommand(amp);
         //shooterSubsystem.setDefaultCommand(shooter);
+        shooterSubsystem.setDefaultCommand(autoShoot);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);
         
@@ -240,21 +250,6 @@ public class RobotContainer
         // X/Lock wheels
         new JoystickButton(driverController, XboxController.Button.kX.value)
                 .whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock)));
-
-        // new Trigger(() -> intake.currPosition == Position.INTAKE)
-        //         .and(new JoystickButton(operatorController, XboxController.Button.kRightBumper.value))
-        //         .onTrue(new RepeatCommand(LEDSubsystem.intaking()))
-        //         .onFalse(LEDSubsystem.idle());
-
-        // new Trigger(() -> intake.currPosition == Position.INTAKE)
-        //         .and(new JoystickButton(operatorController, XboxController.Button.kX.value))
-        //         .whileTrue(new RepeatCommand(LEDSubsystem.intaking()))
-        //         .onFalse(LEDSubsystem.idle());
-
-        // new Trigger(intakeSubsystem::getSwitchVal)
-        //         .whileFalse(new RepeatCommand(LEDSubsystem.noteIn()))
-        //         .onTrue(LEDSubsystem.idle());
-        // Should be reversed because light switch is default false
     }
 
 

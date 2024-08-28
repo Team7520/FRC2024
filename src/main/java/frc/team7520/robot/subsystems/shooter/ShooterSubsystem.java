@@ -1,16 +1,38 @@
 package frc.team7520.robot.subsystems.shooter;
 
 
+import javax.management.relation.Relation;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.VoltageConfigs;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
 import frc.team7520.robot.Constants.IntakeConstants;
 import frc.team7520.robot.Constants.ShooterConstants;
+import frc.team7520.robot.Constants.ShooterConstants.PivotConstants;
+import frc.team7520.robot.Constants.ShooterConstants.TraverseConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -22,13 +44,15 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX topShooterMotor;
     private TalonFX pivotMotor;
     
-    private TalonFX traverseMotor = new TalonFX(ShooterConstants.traverseID);
+    private TalonFX traverseMotor;
     private SparkPIDController botShooterPID;
     private SparkPIDController topShooterPID;
 
-
+    // private RelativeEncoder pivotEncoder;
     private RelativeEncoder botShooterEncoder;
     private RelativeEncoder topShooterEncoder;
+
+    public Rotation2d desiredPivotPos = new Rotation2d(0);
 
     private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(100);
 
@@ -55,62 +79,43 @@ public class ShooterSubsystem extends SubsystemBase {
      * the {@link #getInstance()} method to get the singleton instance.
      */
     private ShooterSubsystem() {
-        /*    leftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushless);
-    rightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushless);
-    leftShooterMotor.restoreFactoryDefaults();
-    rightShooterMotor.restoreFactoryDefaults();
+        pivotMotor = new TalonFX(PivotConstants.CAN_ID);
+        traverseMotor = new TalonFX(TraverseConstants.CAN_ID);
+        var tlnfxConfigs = new TalonFXConfiguration();
+        var motorConfigs = new MotorOutputConfigs();
+        var slot0Configs = new Slot0Configs();
+        var motionMagicConfigs = tlnfxConfigs.MotionMagic;
 
-    leftShooterPID = leftShooterMotor.getPIDController();
-    leftShooterPID.setP(Constants.kShooterP);
-    leftShooterPID.setI(Constants.kShooterI);
-    leftShooterPID.setD(Constants.kShooterD);
-    leftShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
+        pivotMotor.getConfigurator().apply(new TalonFXConfiguration());
+        motorConfigs.NeutralMode = NeutralModeValue.Coast;
+        tlnfxConfigs.Feedback.SensorToMechanismRatio = PivotConstants.degreeConversionFactor;
 
-    rightShooterPID = rightShooterMotor.getPIDController();
-    rightShooterPID.setP(Constants.kShooterP);
-    rightShooterPID.setI(Constants.kShooterI);
-    rightShooterPID.setD(Constants.kShooterD);
-    rightShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
+        slot0Configs.kP = PivotConstants.kP;
+        slot0Configs.kI = PivotConstants.kI;
+        slot0Configs.kD = PivotConstants.kD;
+        slot0Configs.kG = PivotConstants.kG;
+        slot0Configs.kS = PivotConstants.kS;
+        slot0Configs.kV = PivotConstants.kV;
+        slot0Configs.kA = PivotConstants.kA;
 
-    leftShooterEncoder = leftShooterMotor.getEncoder();
-    rightShooterEncoder = rightShooterMotor.getEncoder();
+        motionMagicConfigs.MotionMagicCruiseVelocity = PivotConstants.motionMagicVelocity;
+        motionMagicConfigs.MotionMagicAcceleration = PivotConstants.motionMagicAccel;
+        motionMagicConfigs.MotionMagicJerk = PivotConstants.motionMagicJerk;
 
-    leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        pivotMotor.getConfigurator().apply(motorConfigs);
+        pivotMotor.getConfigurator().apply(tlnfxConfigs);
+        pivotMotor.getConfigurator().apply(slot0Configs);
+        pivotMotor.getConfigurator().apply(motionMagicConfigs);
 
-    leftShooterMotor.setInverted(false);
-    rightShooterMotor.setInverted(true);*/
+        pivotMotor.setPosition(0);
 
-//        leftShooterMotor = new CANSparkMax(Constants.ShooterConstants.shooterLeftID, CANSparkMax.MotorType.kBrushless);
-//        rightShooterMotor = new CANSparkMax(Constants.ShooterConstants.shooterRightID, CANSparkMax.MotorType.kBrushless);
-//
-//        leftShooterMotor.restoreFactoryDefaults();
-//        rightShooterMotor.restoreFactoryDefaults();
-//
-//        leftShooterPID = leftShooterMotor.getPIDController();
-//        leftShooterPID.setP(Constants.ShooterConstants.kP);
-//        leftShooterPID.setI(Constants.ShooterConstants.kI);
-//        leftShooterPID.setD(Constants.ShooterConstants.kD);
-//        leftShooterPID.setFF(Constants.ShooterConstants.kFF);
-//
-//        rightShooterPID = rightShooterMotor.getPIDController();
-//        rightShooterPID.setP(Constants.ShooterConstants.kP);
-//        rightShooterPID.setI(Constants.ShooterConstants.kI);
-//        rightShooterPID.setD(Constants.ShooterConstants.kD);
-//        rightShooterPID.setFF(Constants.ShooterConstants.kFF);
-//
-//        leftShooterEncoder = leftShooterMotor.getEncoder();
-//        rightShooterEncoder = rightShooterMotor.getEncoder();
-//
-//        leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-//        rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-
-        botShooterMotor = new TalonFX(Constants.ShooterConstants.shooterBotID); // left = bot
-        topShooterMotor = new TalonFX(Constants.ShooterConstants.shooterTopID);
-        pivotMotor = new TalonFX(Constants.ShooterConstants.pivotID);
+        botShooterMotor = new TalonFX(ShooterConstants.shooterBotID); // left = bot
+        topShooterMotor = new TalonFX(ShooterConstants.shooterTopID);
+        pivotMotor = new TalonFX(PivotConstants.CAN_ID);
         
         botShooterMotor.setInverted(true);
         topShooterMotor.setInverted(true);
+        traverseMotor.setInverted(true);
         pivotMotor.setInverted(true);
     }
     public void setHorizontalSpeed(double speed){
@@ -134,9 +139,46 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
-    public void stop() {
+    public void setPosition(ShooterConstants.Position position) {
+        desiredPivotPos = position.getPivot();
+        // PositionDutyCycle psdc = new PositionDutyCycle(10);
+        // final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        // pivotMotor.setControl(m_request.withPosition(desiredPivotPos.getDegrees()));
+        // pivotMotor.setControl(psdc);
+        final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
+        pivotMotor.setControl(moveRequest.withPosition(desiredPivotPos.getDegrees()));
+    }
+
+    public void stopShooting() {
         botShooterMotor.stopMotor();
         topShooterMotor.stopMotor();
+    }
+
+    public void stopPivot() {
+        pivotMotor.stopMotor();
+    }
+
+    public double getEncoder() {
+        return pivotMotor.getPosition().getValueAsDouble();
+    }
+
+    public Rotation2d getDesiredPivotPosition() {
+        return desiredPivotPos;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("pivotEncoder", pivotMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("pivotVel", pivotMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("pivotVoltage", pivotMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("pivotCurr", pivotMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("desiredPos", desiredPivotPos.getDegrees());
+        SmartDashboard.putNumber("closedLoopError", pivotMotor.getClosedLoopError().getValueAsDouble());
+        // SmartDashboard.putNumber("DesiredDeg", desiredPosition.getDegrees());
+        // SmartDashboard.putNumber("DesiredRot", desiredPosition.getRotations());
+        // SmartDashboard.putNumber("diffedEncoder", getDiffedEncoder());
+        // SmartDashboard.putNumber("PivotAbsEncoder", pivotAbsEncoder.get());
+        // SmartDashboard.putNumber("wheelsAbsEncoder", wheelAbsEncoder.get());
     }
 }
 

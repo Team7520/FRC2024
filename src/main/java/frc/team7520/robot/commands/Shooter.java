@@ -33,8 +33,8 @@ public class Shooter extends Command {
 
     @Override
     public void execute() {
-        double horizontal = horizontalTraverse.getAsDouble()*0.2;
-        double vertical = verticalTraverse.getAsDouble()*0.15; 
+        double horizontal = horizontalTraverse.getAsDouble()*0.12*-1;
+        double vertical = verticalTraverse.getAsDouble()*0.2*-1; 
         double throttle = throttleSup.getAsDouble()*0.9; //Math.max(throttleSup.getAsDouble(), (slowThrottleSup.getAsDouble() * 0.25)) * (invertSup.getAsBoolean() ? -1 : 1) * 1;
         if (shooterStay.getAsBoolean()){
             if(vertical <= 0.9){
