@@ -1,9 +1,13 @@
 package frc.team7520.robot.subsystems;
 
 
+import java.util.Optional;
+
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -24,6 +28,7 @@ public class LED extends SubsystemBase {
 
     private double m_Color = 0.0;
     private Spark m_ledController = new Spark(1);
+    Optional<Alliance> alliance = DriverStation.getAlliance();
     
 
     /**
@@ -42,11 +47,24 @@ public class LED extends SubsystemBase {
      * the {@link #getInstance()} method to get the singleton instance.
      */
     private LED() {
+    }
 
+    public void start() {
+        m_Color = -0.99; // RAINBOW_RAINBOW_PALETTE
+        m_ledController.set(m_Color);
     }
 
     public void idle() {
-        m_Color = -0.99; // RAINBOW_RAINBOW_PALETTE
+        alliance = DriverStation.getAlliance();
+
+        if (alliance.get() == Alliance.Red) {
+            m_Color = -0.31; // LIGHT CHASE RED
+        }
+
+        else if (alliance.get() == Alliance.Blue) {
+            m_Color = -0.29; // LIGHT CHASE BLUE
+        }
+        
         m_ledController.set(m_Color);
     }
 

@@ -15,19 +15,21 @@ import java.util.function.DoubleSupplier;
 
 public class AutoShoot extends Command {
     private final ShooterSubsystem shooterSubsystem;
-    private final BooleanSupplier restSup;
-    private final BooleanSupplier subwooferPosSup;
+    // private final BooleanSupplier restSup;
+    // private final BooleanSupplier subwooferPosSup;
     private final BooleanSupplier wingLingPosSup;
     private final BooleanSupplier podiumPosSup;
     private final DoubleSupplier throttleSup;
+    private final DoubleSupplier povSup;
 
-    public AutoShoot(ShooterSubsystem shooterSubsystem, BooleanSupplier restSup, BooleanSupplier subwooferPosSup, BooleanSupplier wingLingPosSup, BooleanSupplier podiumPosSup, DoubleSupplier throttleSup) {
+    public AutoShoot(ShooterSubsystem shooterSubsystem, DoubleSupplier povSup, BooleanSupplier wingLingPosSup, BooleanSupplier podiumPosSup, DoubleSupplier throttleSup) {
         this.shooterSubsystem = shooterSubsystem;
-        this.restSup = restSup;
-        this.subwooferPosSup = subwooferPosSup;
+        // this.restSup = restSup;
+        // this.subwooferPosSup = subwooferPosSup;
         this.wingLingPosSup = wingLingPosSup;
         this.podiumPosSup = podiumPosSup;
         this.throttleSup = throttleSup;
+        this.povSup = povSup;
         
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
@@ -57,14 +59,24 @@ public class AutoShoot extends Command {
     public void turretPosition() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
-        if (restSup.getAsBoolean()) {
+        if (povSup.getAsDouble() == 180) {
             shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.REST);
             shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.REST);
             return;
         }
-        if (subwooferPosSup.getAsBoolean()) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFER);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFER);
+        if (povSup.getAsDouble() == 0) {
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERCENTER);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERCENTER);
+            return;
+        }
+        if (povSup.getAsDouble() == 270) {
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERLEFT);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERLEFT);
+            return;
+        }
+        if (povSup.getAsDouble() == 90) {
+            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERRIGHT);
+            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERRIGHT);
             return;
         }
         if (wingLingPosSup.getAsBoolean()) {
@@ -103,13 +115,12 @@ public class AutoShoot extends Command {
     @Override
     public void execute() {
         turretPosition();
-        double throttle = throttleSup.getAsDouble()*0.9;
+        double throttle = throttleSup.getAsDouble();
         shooterSubsystem.setSpeed(throttle, false);  
 
-        SmartDashboard.putBoolean("RestSup", restSup.getAsBoolean());
-        SmartDashboard.putBoolean("SubwooferSup", subwooferPosSup.getAsBoolean());
         SmartDashboard.putBoolean("WingSup", wingLingPosSup.getAsBoolean());
         SmartDashboard.putBoolean("PodSup", podiumPosSup.getAsBoolean());
+        SmartDashboard.putNumber("POVNum", povSup.getAsDouble());
         // SmartDashboard.putBoolean("test", true);
     }
 

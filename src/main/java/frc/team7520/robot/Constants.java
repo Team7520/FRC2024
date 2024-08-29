@@ -56,6 +56,34 @@ public final class Constants {
     public static class Swerve {
         public static final double DRIVE_GEAR_RATIO = 6.12;
         public static final double ANGLE_GEAR_RATIO = 150/7d;
+        /*
+         * Previous swervebase IDs and offsets
+         * Intake was previously back
+         */
+        public class oldSwerveBL {
+            double drv = 8;
+            double ang = 9;
+            double enc = 13;
+            double encOff = 34.45308;
+        }
+        public class oldSwerveBR {
+            double drv = 2;
+            double ang = 3;
+            double enc = 10;
+            double encOff = 341.5428;
+        }
+        public class oldSwerveFL {
+            double drv = 6;
+            double ang = 7;
+            double enc = 12;
+            double encOff = 184.48236;
+        }
+        public class oldSwerveFR {
+            double drv = 4;
+            double ang = 5;
+            double enc = 11;
+            double encOff = 45.9666;
+        }
     }
 
     public static class Telemetry {
@@ -115,11 +143,13 @@ public final class Constants {
 
         public enum Position {
             REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))), //DO NOT CHANGE
-            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(Math.toRadians(0))),
-            WINGLINERED(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))),
-            WINGLINEBLUE(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))),
-            PODIUMRED(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(27))),
-            PODIUMBLUE(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(-27)));
+            SUBWOOFERCENTER(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(0))),
+            SUBWOOFERLEFT(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(95))),
+            SUBWOOFERRIGHT(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(-95))),
+            WINGLINERED(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))),
+            WINGLINEBLUE(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))),
+            PODIUMRED(new Rotation2d(Math.toRadians(37.3316)), new Rotation2d(Math.toRadians(36.7214))),
+            PODIUMBLUE(new Rotation2d(Math.toRadians(37.3316)), new Rotation2d(Math.toRadians(-36.7214)));
 
             Rotation2d pivot;
             Rotation2d traverse;

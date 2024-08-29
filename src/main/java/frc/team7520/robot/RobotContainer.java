@@ -81,6 +81,7 @@ public class RobotContainer
 
     private final Intake intake = new Intake(
             intakeSubsystem,
+            sensorSubsystem,
             operatorController::getAButton,
             operatorController::getBButton,
             operatorController::getLeftBumper // fire
@@ -101,10 +102,9 @@ public class RobotContainer
         );
 
     private final AutoShoot autoShoot = new AutoShoot(shooterSubsystem, 
-        operatorController::getRightBumper,
-        operatorController::getYButton, 
+        operatorController::getPOV,
         operatorController::getXButton,
-        () -> false,
+        operatorController::getYButton,
         operatorController::getLeftTriggerAxis
         );
 
@@ -136,23 +136,6 @@ public class RobotContainer
                 () -> driverController.getXButton()
         );
 
-        // shooter = new Shooter(shooterSubsystem,
-        //        operatorController::getLeftX, // <-->
-        //        operatorController::getRightY, //pivot
-        //        operatorController::getLeftTriggerAxis, // spin up shooter
-        //        operatorController::getXButton
-        // );
-
-        // Intake intake = new Intake(intakeSubsystem,
-        //         () -> operatorController.getAButton()
-        //         );
-        //         operatorController::getYButton,
-        //         operatorController::getAButton,
-        //         operatorController::getBButton,
-        //         operatorController::getXButton,
-        //         intakeSubsystem::getSwitchVal
-        // );
-
         // Old drive method
         // like in video games
         // Easier to learn, harder to control
@@ -165,16 +148,9 @@ public class RobotContainer
                 () -> driverController.getRawAxis(2), () -> true);
 
         drivebase.setDefaultCommand(closedAbsoluteDrive);
-//        ampSubsystem.setDefaultCommand(amp);
-        //shooterSubsystem.setDefaultCommand(shooter);
         shooterSubsystem.setDefaultCommand(autoShoot);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);
-        
-        //climberSubsystem.setDefaultCommand(climber);
-        //LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
-
-        //candle.animate(LEDSubsystem.idleAnimation);
     }
 
     private void registerAutos(){

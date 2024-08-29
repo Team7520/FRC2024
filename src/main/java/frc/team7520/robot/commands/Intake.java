@@ -5,6 +5,7 @@
 package frc.team7520.robot.commands;
 
 import frc.team7520.robot.Constants;
+import frc.team7520.robot.subsystems.SensorSubsystem;
 import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -15,6 +16,7 @@ import java.util.function.DoubleSupplier;
 public class Intake extends Command {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final IntakeSubsystem intakeSubsystem;
+    private final SensorSubsystem sensorSubsystem;
     private final BooleanSupplier spinIntake;
     private final BooleanSupplier reverseIntake;
     private final BooleanSupplier fireShooter;
@@ -24,8 +26,9 @@ public class Intake extends Command {
      *
      * @param intakeSubsystem The subsystem used by this command.
      */
-    public Intake(IntakeSubsystem intakeSubsystem, BooleanSupplier spinIntake, BooleanSupplier reverseIntake, BooleanSupplier fireShooter) {
+    public Intake(IntakeSubsystem intakeSubsystem, SensorSubsystem sensorSubsystem, BooleanSupplier spinIntake, BooleanSupplier reverseIntake, BooleanSupplier fireShooter) {
         this.intakeSubsystem = intakeSubsystem;
+        this.sensorSubsystem = sensorSubsystem;
         this.spinIntake = spinIntake;
         this.reverseIntake = reverseIntake;
         this.fireShooter = fireShooter;
@@ -83,11 +86,12 @@ public class Intake extends Command {
     @Override
     public void execute() {
         if(fireShooter.getAsBoolean()){
-            intakeSubsystem.setFeederSpeed(0.75);
-        } else if (spinIntake.getAsBoolean()){
-            intakeSubsystem.setSpeed(0.25);
+            intakeSubsystem.setFeederSpeed(1);
             intakeSubsystem.setRingSpeed(0.75);
-            intakeSubsystem.setFeederSpeed(0.75);
+        } else if (spinIntake.getAsBoolean() && sensorSubsystem.getColorSensorProximity() < 150){
+            intakeSubsystem.setSpeed(0.4);
+            intakeSubsystem.setRingSpeed(0.75);
+            intakeSubsystem.setFeederSpeed(0.6);
         } else if (reverseIntake.getAsBoolean()){
             intakeSubsystem.setSpeed(-0.25);
             intakeSubsystem.setRingSpeed(-0.75);
