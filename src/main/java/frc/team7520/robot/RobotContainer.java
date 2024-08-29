@@ -54,6 +54,8 @@ import frc.team7520.robot.util.*;
 import java.io.File;
 import java.util.function.BooleanSupplier;
 
+import javax.management.InstanceAlreadyExistsException;
+
 import org.photonvision.estimation.RotTrlTransform3d;
 
 //Temporary Imports BY RObin
@@ -85,6 +87,7 @@ public class RobotContainer
 
         private boolean notePathTrigger = false;
         private boolean chainingPathTrigger = false;
+        private boolean dynamicStart = false;
 
 
     // Subsystems
@@ -139,9 +142,9 @@ public class RobotContainer
                 // Applies deadbands and inverts controls because joysticks
                 // are back-right positive while robot
                 // controls are front-left positive
-                () -> MathUtil.applyDeadband(-driverController.getLeftY()/1.75,
+                () -> MathUtil.applyDeadband(-driverController.getLeftY(),
                         OperatorConstants.LEFT_Y_DEADBAND),
-                () -> MathUtil.applyDeadband(-driverController.getLeftX()/1.75,
+                () -> MathUtil.applyDeadband(-driverController.getLeftX(),
                         OperatorConstants.LEFT_X_DEADBAND),
                 () -> -driverController.getRightX(),
                 () -> -driverController.getRightY(),
@@ -322,14 +325,21 @@ public class RobotContainer
                         new ShootSequence(),
                         new InstantCommand(() -> {speakerRoutineActivateShooter = false;})
                 ));
+
+        new Trigger(() -> dynamicStart)
+                .onTrue(new InstantCommand(() -> {dynamicStart = false;}).andThen(notePickUp(true)));
         
         /* For chaining OTF Note Auto */
         new Trigger(() -> !SwerveSubsystem.pathActive && notePathTrigger)
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> {notePathTrigger = false;}),
+                        // new AutoIntake(Position.SHOOT),
+                        //new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
                         new AutoNoteSearch(drivebase).onlyIf(intakeSubsystem::getSwitchVal),
-                        notePickUp(true).onlyIf(intakeSubsystem::getSwitchVal)
-                        //autoChaining()
+                        notePickUp(true).onlyIf(intakeSubsystem::getSwitchVal),
+                        // new AutoIntake(Position.SHOOT),
+                        // new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
+                        autoChaining()
                 ));
 
         new Trigger(() -> !SwerveSubsystem.pathActive && chainingPathTrigger)
@@ -347,14 +357,15 @@ public class RobotContainer
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        if (autoChooser.getSelected().getName().equals("2MiddleWithAT")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
+        if (autoChooser.getSelected().getName().equals("2MiddleWithAT") || autoChooser.getSelected().getName().equals("2middleWithAt")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
                 return new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 autoChooser.getSelected()
-                        ),
-                        notePickUp(true)
+                        )
                 ).finallyDo((boolean interupted) -> {
                         shooterSubsystem.setDefaultCommand(shooter);
+                        intakeSubsystem.setSpeed(0);
+                        dynamicStart = true;
                 });     
         } else {
                 return new SequentialCommandGroup(
@@ -398,7 +409,6 @@ public class RobotContainer
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
                         cmd.schedule();
                 }).finallyDo((boolean interrupted) -> {
-                        //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                         notePathTrigger = true; 
                 }));
         } else {
@@ -484,19 +494,24 @@ public class RobotContainer
      * @return
      */
     public Command autoChaining() {
-                return new InstantCommand(() -> {
-                        SwerveSubsystem.pathActive = true;
-                        var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
-                                1, 
-                                map.getAutoChaining(), 
-                                new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI), 
-                                new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI))
-                                // map.getSpeakerCenter(), 
-                                // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI), 
-                                // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI))
-                        );
-                        cmd.schedule();                
-                }).finallyDo((boolean interrupted) -> {
+                return new SequentialCommandGroup(
+                        new AutoIntake(Position.SHOOT),
+                        new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
+                        new InstantCommand(() -> {
+                        
+                                SwerveSubsystem.pathActive = true;
+                                var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(
+                                        1, 
+                                        map.getAutoChaining(), 
+                                        new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI), 
+                                        new Rotation2d(map.getAutoChaining().getRotation().getRadians() + Math.PI))
+                                        // map.getSpeakerCenter(), 
+                                        // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI), 
+                                        // new Rotation2d(map.getSpeakerCenter().getRotation().getRadians() + Math.PI))
+                                );
+                                cmd.schedule();                
+                        })
+                ).finallyDo((boolean interrupted) -> {
                         chainingPathTrigger = true;
                 });
     }

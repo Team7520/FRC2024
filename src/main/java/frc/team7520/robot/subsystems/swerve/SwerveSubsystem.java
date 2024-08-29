@@ -296,7 +296,7 @@ public class SwerveSubsystem extends SubsystemBase {
         /** Photonvision stuff */
         if (aprilTagSystem.initiateAprilTagLayout()) {
             Pose2d updatedPose = aprilTagSystem.getCurrentRobotFieldPose();
-            if (updatedPose != null && counter > 1) {
+            if (updatedPose != null && counter > 0) {
                 counter = 0;
                 resetOdometry(updatedPose);
                 //SmartDashboard.putNumber("Estimated Pose Angle",updatedPose.getRotation().getDegrees());
@@ -683,6 +683,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
 
                 EventMarker em = new EventMarker(0.7, new InstantCommand(() -> {RobotContainer.speakerRoutineActivateShooter = true;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
+                EventMarker em2 = new EventMarker(0, new AutoIntake(Position.SHOOT));
+                EventMarker em3 = new EventMarker(0, new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
                 EventMarker signalEnd = new EventMarker(0.97, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
                 List<EventMarker> lst_em = Arrays.asList(em, signalEnd);
             

@@ -89,15 +89,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.2
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "stopIntaking"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.2
                       }
                     }
                   ]
@@ -186,7 +186,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 1.0
                       }
                     },
                     {

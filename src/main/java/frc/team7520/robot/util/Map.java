@@ -38,16 +38,16 @@ public class Map {
      * ** Keep in mind that intake is the head! **
      */
     private Pose2d redSpeakerCenter = new Pose2d(15.2, 5.55, new Rotation2d(Math.toRadians(180))); //15.2, 55.5
-    private Pose2d redSpeakerSourceSide = new Pose2d(16, 4.35, new Rotation2d(Math.toRadians(-120)));
-    private Pose2d redSpeakerAmpSide = new Pose2d(16, 6.8, new Rotation2d(Math.toRadians(120)));
+    private Pose2d redSpeakerSourceSide = new Pose2d(15.5, 4.43, new Rotation2d(Math.toRadians(-147)));
+    private Pose2d redSpeakerAmpSide = new Pose2d(15.5, 6.7, new Rotation2d(Math.toRadians(147)));
 
     private Pose2d redAmp = new Pose2d(14.7, 7.77, new Rotation2d(Math.toRadians(-90)));
     private Pose2d redSource = new Pose2d(1.34, 1.4, new Rotation2d(Math.toRadians(60)));
     private Pose2d redUnderStage = new Pose2d(4.98, 4.1, new Rotation2d(Math.toRadians(0)));
 
     private Pose2d blueSpeakerCenter = new Pose2d(1.4, 5.55, new Rotation2d(0));
-    private Pose2d blueSpeakerSourceSide = new Pose2d(0.6, 4.35, new Rotation2d(Math.toRadians(-60)));
-    private Pose2d blueSpeakerAmpSide = new Pose2d(0.6, 6.8, new Rotation2d(Math.toRadians(60)));
+    private Pose2d blueSpeakerSourceSide = new Pose2d(1.1, 4.43, new Rotation2d(Math.toRadians(-33)));
+    private Pose2d blueSpeakerAmpSide = new Pose2d(1.1, 6.7, new Rotation2d(Math.toRadians(33)));
     
     private Pose2d blueAmp = new Pose2d(1.8, 7.77, new Rotation2d(Math.toRadians(-90)));
     private Pose2d blueSource = new Pose2d(16.06, 1.4, new Rotation2d(Math.toRadians(120)));
@@ -59,8 +59,8 @@ public class Map {
     private Pose2d centerNoteAM = new Pose2d(8.27, 5.78, new Rotation2d(Math.toRadians(0)));
     private Pose2d centerNoteAmp = new Pose2d(8.27, 7.46, new Rotation2d(Math.toRadians(0)));
 
-    private Pose2d redAutoChaining = new Pose2d(10.66, 1.4, Rotation2d.fromDegrees(180));
-    private Pose2d blueAutoChaining = new Pose2d(6.3, 1.4, Rotation2d.fromDegrees(0));
+    private Pose2d redAutoChaining = new Pose2d(10.05, 1.4, Rotation2d.fromDegrees(180));
+    private Pose2d blueAutoChaining = new Pose2d(6.5, 1.4, Rotation2d.fromDegrees(0)); // It's because preplanned path screws up odometry by 0.6 meters
     
     /* 
     final private Pose2d AT1 = new Pose2d(new Translation2d(15.079472, 0.245872), new Rotation2d(Math.toRadians(120))); // B SOURCE 

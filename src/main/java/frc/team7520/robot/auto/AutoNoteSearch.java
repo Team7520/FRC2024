@@ -36,7 +36,12 @@ public class AutoNoteSearch extends Command {
 
     @Override
     public void execute() {
-        swerve.drive(new Translation2d(0,0), Math.PI/3, true);
+        if (SwerveSubsystem.isBlueAlliance) {
+            swerve.drive(new Translation2d(0,0), Math.PI/3, true);
+        } else {
+            swerve.drive(new Translation2d(0,0), -Math.PI/3, true);
+        }
+        
 
         // double currentHeadingDeg = swerve.getHeading().getDegrees();
         // double desiredHeadingDeg = desiredheading.getDegrees();
