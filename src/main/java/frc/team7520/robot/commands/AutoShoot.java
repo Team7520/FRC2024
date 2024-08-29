@@ -1,10 +1,15 @@
 package frc.team7520.robot.commands;
 
+import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.team7520.robot.Constants;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 
+import java.sql.DriverAction;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -49,7 +54,9 @@ public class AutoShoot extends Command {
     //     shooterSubsystem.stopShooting();
     // }
 
-    public void pivotPosition() {
+    public void turretPosition() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+
         if (restSup.getAsBoolean()) {
             shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.REST);
             shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.REST);
@@ -61,13 +68,28 @@ public class AutoShoot extends Command {
             return;
         }
         if (wingLingPosSup.getAsBoolean()) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.WINGLINE);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.WINGLINE);
+            if (alliance.get() == Alliance.Red) {
+                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.WINGLINERED);
+                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.WINGLINERED);
+            }
+
+            else if (alliance.get() == Alliance.Blue) {
+                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.WINGLINEBLUE);
+                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.WINGLINEBLUE);
+            }
+
             return;
         }
         if (podiumPosSup.getAsBoolean()) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUM);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUM);
+            if (alliance.get() == Alliance.Red){
+                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUMRED);
+                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUMRED);
+            }
+
+            else if (alliance.get() == Alliance.Blue) {
+                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUMBLUE);
+                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUMBLUE);
+            }
             return;
         }
 
@@ -80,7 +102,7 @@ public class AutoShoot extends Command {
 
     @Override
     public void execute() {
-        pivotPosition();
+        turretPosition();
         double throttle = throttleSup.getAsDouble()*0.9;
         shooterSubsystem.setSpeed(throttle, false);  
 

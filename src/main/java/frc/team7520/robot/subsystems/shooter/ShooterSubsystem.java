@@ -1,6 +1,8 @@
 package frc.team7520.robot.subsystems.shooter;
 
 
+import java.io.IOError;
+
 import javax.management.relation.Relation;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -26,6 +28,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
@@ -88,12 +91,9 @@ public class ShooterSubsystem extends SubsystemBase {
         
         botShooterMotor = new TalonFX(ShooterConstants.shooterBotID); // left = bot
         topShooterMotor = new TalonFX(ShooterConstants.shooterTopID);
-        pivotMotor = new TalonFX(PivotConstants.CAN_ID);
         
         botShooterMotor.setInverted(true);
         topShooterMotor.setInverted(true);
-        traverseMotor.setInverted(true);
-        pivotMotor.setInverted(true);
     }
 
     public void setHorizontalSpeed(double speed){
@@ -140,8 +140,12 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.stopMotor();
     }
 
-    public double getEncoder() {
+    public double getPivotEncoder() {
         return pivotMotor.getPosition().getValueAsDouble();
+    }
+    
+    public double getTraverseEncoder() {
+        return traverseMotor.getPosition().getValueAsDouble();
     }
 
     public Rotation2d getDesiredPivotPosition() {
@@ -176,6 +180,8 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.getConfigurator().apply(motionMagicConfigs);
 
         pivotMotor.setPosition(0);
+
+        pivotMotor.setInverted(true);
     }
 
     private void configTraverse(TalonFX traverseMotor) {
@@ -186,6 +192,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         traverseMotor.getConfigurator().apply(new TalonFXConfiguration());
         motorConfigs.NeutralMode = TraverseConstants.neutralMode;
+        tlnfxConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         tlnfxConfigs.Feedback.SensorToMechanismRatio = TraverseConstants.degreeConversionFactor;
 
         slot0Configs.kP = TraverseConstants.kP;
@@ -203,30 +210,27 @@ public class ShooterSubsystem extends SubsystemBase {
         traverseMotor.getConfigurator().apply(motorConfigs);
         traverseMotor.getConfigurator().apply(tlnfxConfigs);
         traverseMotor.getConfigurator().apply(slot0Configs);
-        traverseMotor.getConfigurator().apply(motionMagicConfigs);
+        traverseMotor.getConfigurator().apply(motionMagicConfigs);        
+
+        traverseMotor.setInverted(true);
 
         traverseMotor.setPosition(0);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("pivotEncoder", pivotMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("pivotEncoder", getPivotEncoder());
         SmartDashboard.putNumber("pivotVel", pivotMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("pivotVoltage", pivotMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("pivotCurr", pivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("desiredPivotPos", desiredPivotPos.getDegrees());
         SmartDashboard.putNumber("pivotClosedLoopError", pivotMotor.getClosedLoopError().getValueAsDouble());
-        SmartDashboard.putNumber("traverseEncoder", traverseMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("traverseEncoder", getTraverseEncoder());
         SmartDashboard.putNumber("traverseVel", traverseMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("traverseVoltage", traverseMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("traverseCurr", traverseMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("desiredtraversePos", desiredTraversePos.getDegrees());
         SmartDashboard.putNumber("traverseClosedLoopError", traverseMotor.getClosedLoopError().getValueAsDouble());
-        // SmartDashboard.putNumber("DesiredDeg", desiredPosition.getDegrees());
-        // SmartDashboard.putNumber("DesiredRot", desiredPosition.getRotations());
-        // SmartDashboard.putNumber("diffedEncoder", getDiffedEncoder());
-        // SmartDashboard.putNumber("PivotAbsEncoder", pivotAbsEncoder.get());
-        // SmartDashboard.putNumber("wheelsAbsEncoder", wheelAbsEncoder.get());
     }
 }
 

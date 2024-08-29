@@ -114,11 +114,12 @@ public final class Constants {
         public static final double MAX_RPM = 5676;
 
         public enum Position {
-            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(0)), //DO NOT CHANGE
-            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(Math.toRadians(30))),
-            // SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(0)),
-            WINGLINE(new Rotation2d(0), new Rotation2d(0)),
-            PODIUM(new Rotation2d(0), new Rotation2d(0));
+            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))), //DO NOT CHANGE
+            SUBWOOFER(new Rotation2d(Math.toRadians(65)), new Rotation2d(Math.toRadians(0))),
+            WINGLINERED(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))),
+            WINGLINEBLUE(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))),
+            PODIUMRED(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(27))),
+            PODIUMBLUE(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(-27)));
 
             Rotation2d pivot;
             Rotation2d traverse;
@@ -160,7 +161,7 @@ public final class Constants {
             public static final int CAN_ID = 16;
 
             public static final double gearRatio = 80/7;
-            public static final double degreeConversionFactor = 1/gearRatio;
+            public static final double degreeConversionFactor = 1/(gearRatio*3);
             public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
             public static final double kP = 0.3;
             public static final double kI = 0;
@@ -172,7 +173,7 @@ public final class Constants {
 
             public static final double motionMagicVelocity = 100;
             public static final double motionMagicAccel = 200;
-            public static final double motionMagicJerk = 750;
+            public static final double motionMagicJerk = 2000;
         }
     }
 

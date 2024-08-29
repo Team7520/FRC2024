@@ -103,7 +103,7 @@ public class RobotContainer
     private final AutoShoot autoShoot = new AutoShoot(shooterSubsystem, 
         operatorController::getRightBumper,
         operatorController::getYButton, 
-        () -> false,
+        operatorController::getXButton,
         () -> false,
         operatorController::getLeftTriggerAxis
         );
