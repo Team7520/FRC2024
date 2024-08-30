@@ -38,16 +38,16 @@ public class Map {
      * ** Keep in mind that intake is the head! **
      */
     private Pose2d redSpeakerCenter = new Pose2d(15.2, 5.55, new Rotation2d(Math.toRadians(180))); //15.2, 55.5
-    private Pose2d redSpeakerSourceSide = new Pose2d(15.5, 4.43, new Rotation2d(Math.toRadians(-147)));
-    private Pose2d redSpeakerAmpSide = new Pose2d(15.5, 6.7, new Rotation2d(Math.toRadians(147)));
+    private Pose2d redSpeakerSourceSide = new Pose2d(15.88, 4.4, new Rotation2d(Math.toRadians(-120)));
+    private Pose2d redSpeakerAmpSide = new Pose2d(15.86, 6.7, new Rotation2d(Math.toRadians(120)));
 
     private Pose2d redAmp = new Pose2d(14.7, 7.77, new Rotation2d(Math.toRadians(-90)));
     private Pose2d redSource = new Pose2d(1.34, 1.4, new Rotation2d(Math.toRadians(60)));
     private Pose2d redUnderStage = new Pose2d(4.98, 4.1, new Rotation2d(Math.toRadians(0)));
 
-    private Pose2d blueSpeakerCenter = new Pose2d(1.4, 5.55, new Rotation2d(0));
-    private Pose2d blueSpeakerSourceSide = new Pose2d(1.1, 4.43, new Rotation2d(Math.toRadians(-33)));
-    private Pose2d blueSpeakerAmpSide = new Pose2d(1.1, 6.7, new Rotation2d(Math.toRadians(33)));
+    private Pose2d blueSpeakerCenter = new Pose2d(1.35, 5.55, new Rotation2d(0));
+    private Pose2d blueSpeakerSourceSide = new Pose2d(0.67, 4.4, new Rotation2d(Math.toRadians(-60)));
+    private Pose2d blueSpeakerAmpSide = new Pose2d(0.67, 6.7, new Rotation2d(Math.toRadians(60)));
     
     private Pose2d blueAmp = new Pose2d(1.8, 7.77, new Rotation2d(Math.toRadians(-90)));
     private Pose2d blueSource = new Pose2d(16.06, 1.4, new Rotation2d(Math.toRadians(120)));
