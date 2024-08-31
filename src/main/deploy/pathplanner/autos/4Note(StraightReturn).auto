@@ -26,12 +26,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.4
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "Mid To Close Mid"
@@ -50,12 +44,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.4
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {
@@ -89,15 +77,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "wait",
                       "data": {
-                        "name": "stopIntaking"
+                        "waitTime": 0.2
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 1.2
+                        "name": "stopIntaking"
                       }
                     }
                   ]
@@ -127,12 +115,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "SpeakerC.Note3"
@@ -145,12 +127,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {
@@ -186,7 +162,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.2
                       }
                     },
                     {
@@ -222,12 +198,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "Mid To Close Top"
@@ -240,12 +210,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {
@@ -281,7 +245,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 0.2
                       }
                     },
                     {
