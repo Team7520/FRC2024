@@ -327,7 +327,9 @@ public class RobotContainer
                 ));
 
         new Trigger(() -> dynamicStart)
-                .onTrue(new InstantCommand(() -> {dynamicStart = false;}).andThen(notePickUp(true)));
+                .onTrue(new InstantCommand(() -> {
+                        dynamicStart = false;
+                }).andThen(notePickUp(true)));
         
         /* For chaining OTF Note Auto */
         new Trigger(() -> !SwerveSubsystem.pathActive && notePathTrigger)
@@ -340,14 +342,26 @@ public class RobotContainer
                         // new AutoIntake(Position.SHOOT),
                         // new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
                         autoChaining()
-                ));
+                )
+                // .finallyDo((boolean interrupted) -> {
+                //         System.out.println("NOTE END INTERRUPTION: " + interrupted);
+                //         intakeSubsystem.setSpeed(0);
+                //         intakeSubsystem.setPosition(Position.SHOOT);
+                // })
+                );
 
         new Trigger(() -> !SwerveSubsystem.pathActive && chainingPathTrigger)
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> {chainingPathTrigger = false;}),
                         new WaitCommand(0.5),
                         notePickUp(true)
-                ));
+                )
+                // .finallyDo((boolean interrupted) -> {
+                //         System.out.println("CHAIN END INTERRUPTED: " + interrupted);
+                //         intakeSubsystem.setSpeed(0);
+                //         intakeSubsystem.setPosition(Position.SHOOT);
+                // })
+                );
     }
 
 
@@ -359,13 +373,14 @@ public class RobotContainer
     public Command getAutonomousCommand() {
         if (autoChooser.getSelected().getName().equals("2MiddleWithAT") || autoChooser.getSelected().getName().equals("2middleWithAt")) { //The named command is not what is displayed on sendable chooser, but rather the name of the auto as it is written in path planner GUI
                 return new SequentialCommandGroup(
-                        new ParallelCommandGroup(
                                 autoChooser.getSelected()
-                        )
+                                //notePickUp(true)
+                        
                 ).finallyDo((boolean interupted) -> {
                         shooterSubsystem.setDefaultCommand(shooter);
-                        intakeSubsystem.setSpeed(0);
                         dynamicStart = true;
+                        // intakeSubsystem.setSpeed(0);
+                        // intakeSubsystem.setPosition(Position.SHOOT);
                 });     
         } else {
                 return new SequentialCommandGroup(
@@ -404,7 +419,8 @@ public class RobotContainer
         if (chaining) {
                 return new AutoTurn(drivebase, 0, null)
                 .andThen(new WaitCommand(0.2)) //to give tpu time to get accurate average of note
-                .andThen(new InstantCommand(() -> {                        
+                .andThen(new InstantCommand(() -> {   
+                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa");                     
                         SwerveSubsystem.pathActive = true;
                         var cmd = AutoBuilder.followPath(drivebase.sophisticatedOTFPath(0, new Pose2d(), new Rotation2d(), new Rotation2d()));
                         cmd.schedule();

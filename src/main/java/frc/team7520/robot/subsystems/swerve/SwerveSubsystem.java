@@ -676,17 +676,17 @@ public class SwerveSubsystem extends SubsystemBase {
         } else if (mode == 1) {
             pathActive = true;
             /* Shooting sequence */
-            if (true) { // Change the argument to whether you are in range for the position using Map
+            if (getPose().getTranslation().getDistance(destination.getTranslation()) < 4) { // Change the argument to whether you are in range for the position using Map
                 List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
                     new Pose2d(getPose().getTranslation(), startBezier), 
                     new Pose2d(destination.getTranslation(), endBezier) 
                 );
 
-                EventMarker em = new EventMarker(0.7, new InstantCommand(() -> {RobotContainer.speakerRoutineActivateShooter = true;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
+                EventMarker em3 = new EventMarker(0.7, new InstantCommand(() -> {RobotContainer.speakerRoutineActivateShooter = true;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
                 EventMarker em2 = new EventMarker(0, new AutoIntake(Position.SHOOT));
-                EventMarker em3 = new EventMarker(0, new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
+                EventMarker em1 = new EventMarker(0, new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
                 EventMarker signalEnd = new EventMarker(0.97, new InstantCommand(() -> {pathActive = false;})); // THIS COMMAND IS TERMINATED WHEN THE PATH ENDS
-                List<EventMarker> lst_em = Arrays.asList(em, signalEnd);
+                List<EventMarker> lst_em = Arrays.asList(em1, em2, em3, signalEnd);
             
                 //RotationTarget rt = new RotationTarget(0.5, Rotation2d.fromDegrees(direction + tpuSystem.getBestNoteAngleToApproach()));
                 List<RotationTarget> lst_rt = Arrays.asList();

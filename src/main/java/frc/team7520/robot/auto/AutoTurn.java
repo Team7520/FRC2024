@@ -15,6 +15,7 @@ import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 
 public class AutoTurn extends Command {
     private final SwerveSubsystem swerve;
+    //private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
     
     //private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
     private Rotation2d desiredheading;
@@ -33,13 +34,14 @@ public class AutoTurn extends Command {
         this.mode = mode;
         this.desiredheading = desiredheading; 
         addRequirements(swerve);
-        //addRequirements(intakeSubsystem);
+        //addRequirements(shooter);
         
 
     }
 
     @Override
     public void initialize() {
+        //shooter.setSpeed(0, true);
         if (mode == 0) {
             this.desiredheading = swerve.bestAngleToApproachNote();
             speedConstant = 3;
