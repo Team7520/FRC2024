@@ -341,7 +341,7 @@ public class RobotContainer
                         notePickUp(true).onlyIf(intakeSubsystem::getSwitchVal),
                         // new AutoIntake(Position.SHOOT),
                         // new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
-                        autoChaining()
+                        autoChaining(!intakeSubsystem.getSwitchVal())
                 )
                 // .finallyDo((boolean interrupted) -> {
                 //         System.out.println("NOTE END INTERRUPTION: " + interrupted);
@@ -375,7 +375,7 @@ public class RobotContainer
                 return new SequentialCommandGroup(
                                 autoChooser.getSelected()
                                 //notePickUp(true)
-                        
+                
                 ).finallyDo((boolean interupted) -> {
                         shooterSubsystem.setDefaultCommand(shooter);
                         dynamicStart = true;
@@ -506,10 +506,13 @@ public class RobotContainer
     }
 
     /**
-     * Path used in 15s auto chaining for returning shots to alliance
+     * Path used in 15s auto chaining for returning shots to alliance. When there is a note inside the intake, the bot will
+     * go to the chaining position and shoot. If no note was picked up, there is no recursion/looping.
+     * @param noteInsideIntake a boolean indicating whether the intake has a note. Comes from intakeSubsystem.getSwitchVal()
      * @return
      */
-    public Command autoChaining() {
+    public Command autoChaining(boolean noteInsideIntake) {
+        if (noteInsideIntake) {
                 return new SequentialCommandGroup(
                         new AutoIntake(Position.SHOOT),
                         new InstantCommand(() -> {intakeSubsystem.setSpeed(0);}),
@@ -528,11 +531,22 @@ public class RobotContainer
                                 cmd.schedule();                
                         })
                 ).finallyDo((boolean interrupted) -> {
-                        chainingPathTrigger = true;
+                        //chainingPathTrigger = true;
                 });
+        } else {
+                return new InstantCommand(() -> {
+                        intakeSubsystem.setSpeed(0);
+                        intakeSubsystem.setPosition(Position.SHOOT);
+                });
+        }
+                
     }
 
     public void teleOpInit() {
         shooterSubsystem.setDefaultCommand(shooter);
+        chainingPathTrigger = false;
+        dynamicStart = false;
+        notePathTrigger = false;
     }
+
 }

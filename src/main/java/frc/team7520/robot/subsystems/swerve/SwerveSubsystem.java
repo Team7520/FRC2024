@@ -676,7 +676,8 @@ public class SwerveSubsystem extends SubsystemBase {
         } else if (mode == 1) {
             pathActive = true;
             /* Shooting sequence */
-            if (getPose().getTranslation().getDistance(destination.getTranslation()) < 4) { // Change the argument to whether you are in range for the position using Map
+            if (true) { // Change the argument to whether you are in range for the position using Map
+                //getPose().getTranslation().getDistance(destination.getTranslation()) < 4
                 List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
                     new Pose2d(getPose().getTranslation(), startBezier), 
                     new Pose2d(destination.getTranslation(), endBezier) 

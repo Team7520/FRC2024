@@ -144,10 +144,10 @@ public class AprilTagSystem {
          * -Robin
          */
         double CAMERA_POS_FOR_ROBOT_X = -0.26; // Meters
-        double CAMERA_POS_FOR_ROBOT_Y = 0;
+        double CAMERA_POS_FOR_ROBOT_Y = -0.06;
         double CAMERA_POS_FOR_ROBOT_Z = 0.6858;
         double CAMERA_POS_FOR_ROBOT_ROLL = 0;
-        double CAMERA_POS_FOR_ROBOT_PITCH = -Math.toRadians(21); // Radians
+        double CAMERA_POS_FOR_ROBOT_PITCH = -Math.toRadians(20); // Radians
         double CAMERA_POS_FOR_ROBOT_YAW = Math.PI;
 
         Transform3d robotToCamera = new Transform3d(CAMERA_POS_FOR_ROBOT_X, 

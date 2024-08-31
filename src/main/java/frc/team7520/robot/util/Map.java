@@ -59,8 +59,8 @@ public class Map {
     private Pose2d centerNoteAM = new Pose2d(8.27, 5.78, new Rotation2d(Math.toRadians(0)));
     private Pose2d centerNoteAmp = new Pose2d(8.27, 7.46, new Rotation2d(Math.toRadians(0)));
 
-    private Pose2d redAutoChaining = new Pose2d(10.05, 1.4, Rotation2d.fromDegrees(180));
-    private Pose2d blueAutoChaining = new Pose2d(6.5, 1.4, Rotation2d.fromDegrees(0)); // It's because preplanned path screws up odometry by 0.6 meters
+    private Pose2d redAutoChaining = new Pose2d(10.65, 1.4, Rotation2d.fromDegrees(180));
+    private Pose2d blueAutoChaining = new Pose2d(5.9, 1.4, Rotation2d.fromDegrees(0)); // It's because preplanned path screws up odometry by 0.6 meters
     
     /* 
     final private Pose2d AT1 = new Pose2d(new Translation2d(15.079472, 0.245872), new Rotation2d(Math.toRadians(120))); // B SOURCE 
