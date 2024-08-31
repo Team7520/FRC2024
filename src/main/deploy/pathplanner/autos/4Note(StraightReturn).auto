@@ -45,12 +45,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.4
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "intake"
@@ -85,19 +79,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.2
                       }
                     },
                     {
                       "type": "named",
                       "data": {
                         "name": "stopIntaking"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.2
                       }
                     }
                   ]
@@ -140,12 +128,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "intake"
@@ -180,7 +162,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.2
                       }
                     },
                     {
@@ -229,12 +211,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.45
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "intake"
@@ -269,7 +245,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.2
                       }
                     },
                     {
