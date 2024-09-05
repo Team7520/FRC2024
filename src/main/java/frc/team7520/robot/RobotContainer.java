@@ -98,7 +98,7 @@ public class RobotContainer
 
     private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
 
-    private final AmpSubsystem ampSubsystem = AmpSubsystem.getInstance();
+//    private final AmpSubsystem ampSubsystem = AmpSubsystem.getInstance();
 
     private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
     private final LED LEDSubsystem = LED.getInstance();
@@ -120,8 +120,8 @@ public class RobotContainer
             operatorController::getXButton
         );
 
-        private final Amp amp = new Amp(ampSubsystem,
-                operatorController::getPOV);
+//        private final Amp amp = new Amp(ampSubsystem,
+//                operatorController::getPOV);
 
     public Shooter shooter;
 
@@ -150,7 +150,7 @@ public class RobotContainer
                 () -> -driverController.getRightY(),
                 driverController::getRightBumper,
                 driverController::getLeftBumper,
-                () -> false
+                () -> driverController.getXButton()
         );
 
          shooter = new Shooter(shooterSubsystem,
@@ -195,7 +195,7 @@ public class RobotContainer
                 () -> driverController.getRawAxis(2), () -> true);
         */
         drivebase.setDefaultCommand(closedAbsoluteDrive);
-        ampSubsystem.setDefaultCommand(amp);
+//        ampSubsystem.setDefaultCommand(amp);
         shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
         climberSubsystem.setDefaultCommand(climber);
@@ -235,8 +235,7 @@ public class RobotContainer
 
         // Troll Auto
         autoChooser.addOption("TrollAuto3NoteFeed", drivebase.getPPAutoCommand("TrollAuto3NoteFeed", true));
-
- 
+        autoChooser.addOption("Just shoot", new ShootSequence());
         SmartDashboard.putData(autoChooser);
     }
 
