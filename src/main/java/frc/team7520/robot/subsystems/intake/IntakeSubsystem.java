@@ -174,6 +174,8 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("diffedEncoder", getDiffedEncoder());
         SmartDashboard.putNumber("PivotAbsEncoder", pivotAbsEncoder.get());
         SmartDashboard.putNumber("wheelsAbsEncoder", wheelAbsEncoder.get());
+        
+        SmartDashboard.putBoolean("NOTE INSIDE INTAKE!", getSwitchVal());
     }
 
 }

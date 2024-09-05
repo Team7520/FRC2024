@@ -52,7 +52,7 @@ public final class Constants {
     }
 
     public static class Swerve {
-        public static final double DRIVE_GEAR_RATIO = 6.75;
+        public static final double DRIVE_GEAR_RATIO = 6.7; //6.7 previously for kraken/neo swerve3, 8.6 for swerve2 before it was changed
         public static final double ANGLE_GEAR_RATIO = 150/7d;
     }
 
@@ -64,8 +64,8 @@ public final class Constants {
 
     public static class IntakeConstants {
         public enum Position {
-            SHOOT(new Rotation2d(0), 1),
-            INTAKE(new Rotation2d(Units.degreesToRadians(212.152317734808d)), -0.3),
+            SHOOT(new Rotation2d(0), 0.4), //SPEED USED TO BE 1
+            INTAKE(new Rotation2d(Units.degreesToRadians(212.152317734808d)), -0.4),
             AMP(new Rotation2d(Units.degreesToRadians(83.5138969421)), 0.495);
 
             private final Rotation2d position;
@@ -123,8 +123,8 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-        public static final int shooterLeftID = 20;
-        public static final int shooterRightID = 21;
+        public static final int shooterLeftID = 21;
+        public static final int shooterRightID = 20;
         public static final int ampMechID = 25;
 
         public static final double kP = 0.002;
@@ -140,7 +140,8 @@ public final class Constants {
     public static class ClimberConstants {
         public static final int climberLeftID = 30;
         public static final int climberRightID = 31;
-        public static final int maxPosition = 520;
+        //public static final int maxPosition = 520;
+        public static final int maxPosition = 130;
 
         public static final double kP = 0.004;
         public static final double kI = 0.0;
