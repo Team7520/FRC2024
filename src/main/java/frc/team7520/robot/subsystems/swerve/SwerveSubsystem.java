@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +35,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import java.io.File;
+import java.util.Optional;
 
 import static frc.team7520.robot.Constants.Telemetry.SWERVE_VERBOSITY;
 
@@ -46,7 +48,9 @@ public class SwerveSubsystem extends SubsystemBase {
     /**
      * Maximum speed of the robot in meters per second, used to limit acceleration.
      */
-    public double maximumSpeed = Units.feetToMeters(14.5);
+    public double maximumSpeed = Units.feetToMeters(16);
+
+    static Optional<Alliance> alliance = DriverStation.getAlliance();
 
     /**
      * Initialize {@link SwerveDrive} with the directory provided.
@@ -99,7 +103,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                 swerveDrive.swerveController.config.headingPIDF.i,
                                 swerveDrive.swerveController.config.headingPIDF.d),
                         // Rotation PID constants
-                        4.5,
+                        4.87,
                         // Max module speed, in m/s
                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
                         // Drive base radius in meters. Distance from robot center to furthest module.
@@ -135,6 +139,36 @@ public class SwerveSubsystem extends SubsystemBase {
         // Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path);
     }
+
+    // public static String fourNoteAutoColour() {
+    //     String autoName = "";
+    //     alliance = DriverStation.getAlliance();
+    //     if (alliance.isPresent()) {
+    //         if (alliance.get() == Alliance.Red) {
+    //             autoName = "4NoteAuto(RED)";
+    //         } else if (alliance.get() == Alliance.Blue) {
+    //             autoName = "4NoteAuto(BLUE)";
+    //         }
+    //         return autoName;
+    //     }
+
+    //     return "Safe(SnapBack)";
+    // }
+
+    // public static String centerAutoColour() {
+    //     String autoName = "";
+    //     alliance = DriverStation.getAlliance();
+    //     if (alliance.isPresent()) {
+    //         if (alliance.get() == Alliance.Red) {
+    //             autoName = "CenterAuto(RED)";
+    //         } else if (alliance.get() == Alliance.Blue) {
+    //             autoName = "CenterAuto(BLUE)";
+    //         }
+    //         return autoName;
+    //     }
+
+    //     return "CenterSafe";
+    // }
 
     /**
      * Get the autonomous command for the robot.

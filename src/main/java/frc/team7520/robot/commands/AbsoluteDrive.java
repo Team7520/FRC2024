@@ -28,6 +28,7 @@ public class AbsoluteDrive extends Command {
     private final DoubleSupplier headingHorizontal, headingVertical;
     private final BooleanSupplier CCWSpin, CWSpin, speedCutoffSup;
     private boolean initRotation = false;
+    private boolean speedCutoff;
 
     /**
      * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -81,6 +82,7 @@ public class AbsoluteDrive extends Command {
     @Override
     public void initialize() {
         initRotation = true;
+        speedCutoff = false;
         SmartDashboard.putBoolean("initRotation", initRotation);
     }
 
@@ -88,10 +90,13 @@ public class AbsoluteDrive extends Command {
     @Override
     public void execute() {
 
-        Boolean speedCutoff = speedCutoffSup.getAsBoolean();
+        if (speedCutoffSup.getAsBoolean()) {
+            speedCutoff = !speedCutoff;
+        }
+        SmartDashboard.putBoolean("speedCutOff", speedCutoff);
 
-        double vXspeed = vX.getAsDouble() * (speedCutoffSup.getAsBoolean() ? 1 : 1) * 0.5;
-        double vYspeed = vY.getAsDouble() * (speedCutoffSup.getAsBoolean() ? 1 : 1) * 0.5;
+        double vXspeed = vX.getAsDouble() * (speedCutoffSup.getAsBoolean() ? 1 : 1);
+        double vYspeed = vY.getAsDouble() * (speedCutoffSup.getAsBoolean() ? 1 : 1);
 
         ChassisSpeeds desiredSpeeds;
 
@@ -129,7 +134,7 @@ public class AbsoluteDrive extends Command {
         SmartDashboard.putNumber("LimitedTranslation", translation.getX());
         SmartDashboard.putString("Translation", translation.toString());
 
-        translation = speedCutoff ? translation.times(0.5) : translation;
+        translation = speedCutoff ? translation.times(0.75) : translation;
 
         // Make the robot move
         swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);

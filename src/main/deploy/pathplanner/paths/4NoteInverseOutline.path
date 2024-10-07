@@ -1,0 +1,100 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3669845521509223,
+        "y": 5.531946336619947
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.3669845521509205,
+        "y": 5.531946336619947
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9062276306370793,
+        "y": 5.531946336619947
+      },
+      "prevControl": {
+        "x": 2.3007712379061114,
+        "y": 5.3360426720853456
+      },
+      "nextControl": {
+        "x": 3.511684023368048,
+        "y": 5.727850001154548
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9062276306370793,
+        "y": 4.113976955226638
+      },
+      "prevControl": {
+        "x": 2.562287130256079,
+        "y": 3.979293185859099
+      },
+      "nextControl": {
+        "x": 3.25016813101808,
+        "y": 4.248660724594178
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9062276306370793,
+        "y": 6.977901955803912
+      },
+      "prevControl": {
+        "x": 1.9838076931125452,
+        "y": 6.5675464561156405
+      },
+      "nextControl": {
+        "x": 3.8286475681616206,
+        "y": 7.388257455492183
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.7758330062114664,
+        "y": 5.92375366568915
+      },
+      "prevControl": {
+        "x": 6.7758330062114664,
+        "y": 5.92375366568915
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.87,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "SnapBack Paths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

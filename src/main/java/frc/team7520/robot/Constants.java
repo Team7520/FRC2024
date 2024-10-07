@@ -141,22 +141,27 @@ public final class Constants {
 
         public static final double MAX_RPM = 5676;
 
+        public static final int colourSensorSensedProximity = 145;
+
         public enum Position {
-            REST(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))), //DO NOT CHANGE
-            SUBWOOFERCENTER(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(0))),
-            SUBWOOFERLEFT(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(95))),
-            SUBWOOFERRIGHT(new Rotation2d(Math.toRadians(70)), new Rotation2d(Math.toRadians(-95))),
-            WINGLINERED(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))),
-            WINGLINEBLUE(new Rotation2d(Math.toRadians(-7.6)), new Rotation2d(Math.toRadians(0))),
-            PODIUMRED(new Rotation2d(Math.toRadians(37.3316)), new Rotation2d(Math.toRadians(36.7214))),
-            PODIUMBLUE(new Rotation2d(Math.toRadians(37.3316)), new Rotation2d(Math.toRadians(-36.7214)));
+            REST(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))), //DO NOT CHANGE
+            DRIVE(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(-95))),
+            SUBWOOFERCENTER(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(0))),
+            SUBWOOFERLEFT(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(95))),
+            SUBWOOFERRIGHT(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(-95))),
+            WINGLINERED(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(42.3))),
+            WINGLINEBLUE(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(-42.3))),
+            PODIUMRED(new Rotation2d(Math.toRadians(44.9316)), new Rotation2d(Math.toRadians(25))),
+            PODIUMBLUE(new Rotation2d(Math.toRadians(44.9316)), new Rotation2d(Math.toRadians(-25))),
+            NOTECENTER(new Rotation2d(Math.toRadians(51.9326)), new Rotation2d(Math.toRadians(0))),
+            AMP(new Rotation2d(Math.toRadians(72.4453)), new Rotation2d(Math.toRadians(0)));
 
             Rotation2d pivot;
             Rotation2d traverse;
 
             Position(Rotation2d pivot, Rotation2d traverse) {
                 this.pivot = pivot;
-                this.traverse = traverse;
+                this.traverse = traverse; 
             }
 
             public Rotation2d getPivot() {

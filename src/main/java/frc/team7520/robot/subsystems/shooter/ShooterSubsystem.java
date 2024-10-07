@@ -179,9 +179,9 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.getConfigurator().apply(slot0Configs);
         pivotMotor.getConfigurator().apply(motionMagicConfigs);
 
-        pivotMotor.setPosition(0);
-
         pivotMotor.setInverted(true);
+
+        pivotMotor.setPosition(0);
     }
 
     private void configTraverse(TalonFX traverseMotor) {

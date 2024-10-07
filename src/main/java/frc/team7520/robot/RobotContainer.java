@@ -18,8 +18,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.team7520.robot.Constants.AmpConstants;
-import frc.team7520.robot.Constants.IntakeConstants;
-import frc.team7520.robot.Constants.IntakeConstants.Position;
+import frc.team7520.robot.auto.AutoFeeder;
+import frc.team7520.robot.auto.AutoIntake;
+// import frc.team7520.robot.Constants.IntakeConstants;
+// import frc.team7520.robot.Constants.IntakeConstants.Position;
+import frc.team7520.robot.auto.AutoShootPos;
+import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -27,21 +31,20 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 // import frc.team7520.robot.auto.AutoShoot;
 // import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.commands.AbsoluteDrive;
+import frc.team7520.robot.commands.Amp;
 //import frc.team7520.robot.commands.Climber;
 import frc.team7520.robot.commands.Intake;
 import frc.team7520.robot.commands.Sensor;
 import frc.team7520.robot.commands.Shooter;
 
-import frc.team7520.robot.commands.Amp;
-import frc.team7520.robot.commands.AutoShoot;
 import frc.team7520.robot.commands.TeleopDrive;
-//import frc.team7520.robot.subsystems.climber.ClimberSubsystem;
 import frc.team7520.robot.subsystems.LED;
 import frc.team7520.robot.subsystems.SensorSubsystem;
 import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
-import frc.team7520.robot.subsystems.amp.AmpSubsystem;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
+import frc.team7520.robot.Constants.ShooterConstants;
+import frc.team7520.robot.Constants.ShooterConstants.Position;
 
 import java.io.File;
 
@@ -65,9 +68,6 @@ public class RobotContainer
 
     private final SensorSubsystem sensorSubsystem = SensorSubsystem.getInstance();
 
-//    private final AmpSubsystem ampSubsystem = AmpSubsystem.getInstance();
-
-    //private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
     private final LED LEDSubsystem = LED.getInstance();
 
     public final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -84,15 +84,8 @@ public class RobotContainer
             sensorSubsystem,
             operatorController::getAButton,
             operatorController::getBButton,
-            operatorController::getLeftBumper // fire
+            operatorController::getRightTriggerAxis // fire
         );
-
-
-
-//        private final Amp amp = new Amp(ampSubsystem,
-//                operatorController::getPOV);
-        
-    public Shooter shooter;
 
     private final Sensor sensor = new Sensor(
         sensorSubsystem, 
@@ -101,11 +94,13 @@ public class RobotContainer
         sensorSubsystem::getColorSensorProximity
         );
 
-    private final AutoShoot autoShoot = new AutoShoot(shooterSubsystem, 
+    private final Shooter shooter = new Shooter(shooterSubsystem, 
         operatorController::getPOV,
-        operatorController::getXButton,
+        operatorController::getLeftBumper,
         operatorController::getYButton,
-        operatorController::getLeftTriggerAxis
+        operatorController::getLeftTriggerAxis,
+        () -> false,
+        operatorController::getRightBumper
         );
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -133,7 +128,7 @@ public class RobotContainer
                 () -> driverController.getRightY(),
                 driverController::getRightBumper,
                 driverController::getLeftBumper,
-                () -> driverController.getXButton()
+                driverController::getBButtonPressed
         );
 
         // Old drive method
@@ -148,45 +143,25 @@ public class RobotContainer
                 () -> driverController.getRawAxis(2), () -> true);
 
         drivebase.setDefaultCommand(closedAbsoluteDrive);
-        shooterSubsystem.setDefaultCommand(autoShoot);
+        shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);
     }
 
     private void registerAutos(){
 
-        // registerNamedCommands();
+        registerNamedCommands();
 
-        // autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("safe", true));
-        // autoChooser.addOption("Amp", drivebase.getPPAutoCommand("Amp", true));
-        // autoChooser.addOption("Test", drivebase.getPPAutoCommand("test", true));
-        // autoChooser.addOption("BotToCentBot", drivebase.getPPAutoCommand("BotToCentBot", true));
-        // autoChooser.addOption("MidToCentTop", drivebase.getPPAutoCommand("MidToCentTop", true));
-        // autoChooser.addOption("TopToCentTop", drivebase.getPPAutoCommand("TopToCentTop", true));
-        // autoChooser.addOption("2Note", drivebase.getPPAutoCommand("2NoteMid", true));
-        // autoChooser.addOption("3NoteMid.Note1", drivebase.getPPAutoCommand("3NoteMid.Note1", true));
-        // autoChooser.addOption("3NoteMid.Note3", drivebase.getPPAutoCommand("3NoteMid.Note3", true));
-        // autoChooser.addOption("4Note", drivebase.getPPAutoCommand("4Note", true));
-        // autoChooser.addOption("4Note(StraightReturn)", drivebase.getPPAutoCommand("4Note(StraightReturn)", true));
-        // autoChooser.addOption("2NoteSpeakerS.Note3", drivebase.getPPAutoCommand("2NoteSpeakerS.Note3", true));
-        // autoChooser.addOption("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", drivebase.getPPAutoCommand("3NoteSpeakerC.Note2.SpeakerC.Note5.SpeakerC", true));
-
-        // // 1note shoot and Speaker Source side to note8 parking
-        // autoChooser.addOption("SpeakerS.Note8", drivebase.getPPAutoCommand("SpeakerS.Note8", true));
-
-        // // 2note Ampside
-        // autoChooser.addOption("SpeakerA.Note1.SpeakerA", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA", true));
-        // // 2note Ampside with move to center
-        // autoChooser.addOption("SpeakerA.Note1.SpeakerA.Note4", drivebase.getPPAutoCommand("SpeakerA.Note1.SpeakerA.Note4", true));
-        // autoChooser.addOption("SpeakerS.Note8.SpeakerS", drivebase.getPPAutoCommand("SpeakerS.Note8.SpeakerS", true));
-        // autoChooser.addOption("4NoteButFaster", drivebase.getPPAutoCommand("4NoteButFaster", true));
-
-        // // Troll Auto
-        // autoChooser.addOption("TrollAuto3NoteFeed", drivebase.getPPAutoCommand("TrollAuto3NoteFeed", true));
-
-        // autoChooser.addOption("Just shoot", new ShootSequence());
-
-        // SmartDashboard.putData(autoChooser);
+        autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("Safe(SnapBack)", true));
+        autoChooser.addOption("Shoot", drivebase.getPPAutoCommand("ShootTest", true));
+        autoChooser.addOption("Feeder Test", drivebase.getPPAutoCommand("FeederTest", true));
+        autoChooser.addOption("4NoteAutoBlue", drivebase.getPPAutoCommand("4NoteAuto(BLUE)", true));
+        autoChooser.addOption("4NoteAutoRed", drivebase.getPPAutoCommand("4NoteAuto(RED)", true));
+        autoChooser.addOption("CenterAutoBlue", drivebase.getPPAutoCommand("CenterAuto(BLUE)", true));
+        autoChooser.addOption("CenterAutoRed", drivebase.getPPAutoCommand("CenterAuto(RED)", true));
+        
+        SmartDashboard.putData(autoChooser);
+        // SmartDashboard.putBoolean("Shooting", true);
     }
 
     /**
@@ -196,15 +171,19 @@ public class RobotContainer
     private void registerNamedCommands()
     {
         // Example
-        // NamedCommands.registerCommand("shoot", new ShootSequence());
+        NamedCommands.registerCommand("shootSubwooferCenter", new AutoShootPos(Position.SUBWOOFERCENTER));
+        NamedCommands.registerCommand("shootSubwooferRight", new AutoShootPos(Position.SUBWOOFERRIGHT));
+        NamedCommands.registerCommand("shootSubwooferLeft", new AutoShootPos(Position.SUBWOOFERLEFT));
+        NamedCommands.registerCommand("shootNoteCW", new AutoShootPos(Position.PODIUMBLUE));
+        NamedCommands.registerCommand("shootNoteCenter", new AutoShootPos(Position.NOTECENTER));
+        NamedCommands.registerCommand("shootNoteCCW", new AutoShootPos(Position.PODIUMRED));
+        NamedCommands.registerCommand("shootWinglineBlue", new AutoShootPos(Position.WINGLINEBLUE));
+        NamedCommands.registerCommand("shootWinglineRed", new AutoShootPos(Position.WINGLINERED));
+        NamedCommands.registerCommand("shooterRest", new AutoShootPos(Position.REST));
+        NamedCommands.registerCommand("shoot", new ShootSequence());
         // NamedCommands.registerCommand("log", new InstantCommand(() -> System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee")));
-        // NamedCommands.registerCommand("intakeOut", new AutoIntake(Position.INTAKE));
-        // NamedCommands.registerCommand("intake", new InstantCommand(() -> intakeSubsystem.setSpeed(Position.INTAKE.getSpeed())));
-        // NamedCommands.registerCommand("stopIntaking", new InstantCommand(() -> intakeSubsystem.setSpeed(0)));
-        // NamedCommands.registerCommand("intakeIn", new AutoIntake(Position.SHOOT));
-        // NamedCommands.registerCommand("stopShoot", new AutoShoot(0, false));
-
-
+        NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).until(() -> sensorSubsystem.getColorSensorProximity() > ShooterConstants.colourSensorSensedProximity));
+        // NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> new AutoIntake(0, 0, 0)));
     }
 
 
@@ -226,6 +205,9 @@ public class RobotContainer
         // X/Lock wheels
         new JoystickButton(driverController, XboxController.Button.kX.value)
                 .whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock)));
+
+        new JoystickButton(operatorController, XboxController.Button.kX.value)
+                .onTrue(new Amp());
     }
 
 
@@ -236,7 +218,8 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        return null;
+        
+        return autoChooser.getSelected();
         // return new SequentialCommandGroup(
         //         new ParallelCommandGroup(
         //                 new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new AutoShoot(0.7, false))),

@@ -5,6 +5,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team7520.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -34,7 +35,7 @@ public class SensorSubsystem extends SubsystemBase {
     public int getColorSensorProximity(){
         int proximity = m_colorSensor.getProximity();
         SmartDashboard.putNumber("Proximity", proximity);
-        if (proximity > 150) {
+        if (proximity > ShooterConstants.colourSensorSensedProximity) {
             SmartDashboard.putBoolean("NoteDetectedShooter", true);
         } else{
             SmartDashboard.putBoolean("NoteDetectedShooter", false);

@@ -1,77 +1,34 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.team7520.robot.commands;
 
-import frc.team7520.robot.Constants;
-import frc.team7520.robot.subsystems.amp.AmpSubsystem;
-import frc.team7520.robot.subsystems.intake.IntakeSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.team7520.robot.Constants.ShooterConstants;
+import frc.team7520.robot.auto.AutoFeeder;
+import frc.team7520.robot.auto.AutoShoot;
+import frc.team7520.robot.auto.AutoShootPos;
+import frc.team7520.robot.subsystems.SensorSubsystem;
+import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 
-/** An example command that uses an example subsystem. */
-public class Amp extends Command {
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final AmpSubsystem ampSubsystem;
-    private final IntSupplier posSup;
-    // private final DoubleSupplier bRightManual;
+public class Amp extends SequentialCommandGroup {
 
-    public Constants.AmpConstants.Position currPosition = Constants.AmpConstants.Position.REST;
+    public Amp() {
 
-
-
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param ampSubsystem The subsystem used by this command.
-     */
-    public Amp(AmpSubsystem ampSubsystem, IntSupplier posSup) {
-        this.ampSubsystem = ampSubsystem;
-        this.posSup = posSup;
-        // this.bRightManual = bRightManual;
-
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(ampSubsystem);
-    }
-
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-
-//        System.out.println(posSup.getAsInt());
-        double rightSpeed = posSup.getAsInt();
-        if (rightSpeed == 0) {
-            //System.out.println("90");
-            rightSpeed = 0.4;
-        } else if (rightSpeed == 180) {
-            rightSpeed = -0.7;
-            //System.out.println("270");
-        } else {
-            rightSpeed = 0;
-        }
-        ampSubsystem.setSpeed(rightSpeed);
-
-
-    }
-
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return false;
+        // TODO: Add your sequential commands in the super() call, e.g.
+        //           super(new OpenClawCommand(), new MoveArmCommand());
+        super(
+                new ParallelRaceGroup(
+                    new AutoShootPos(ShooterConstants.Position.AMP),
+                    new WaitCommand(0.3)
+                ),
+                new ParallelRaceGroup(
+                    new AutoShoot(0.127), 
+                    new AutoFeeder(0.9, 1).until(() -> SensorSubsystem.getInstance().getColorSensorProximity() < ShooterConstants.colourSensorSensedProximity)
+                ),
+                new ParallelRaceGroup(
+                    new WaitCommand(0.1), 
+                    new AutoShootPos(ShooterConstants.Position.REST)
+                ),
+                new InstantCommand(() -> ShooterSubsystem.getInstance().stopShooting())
+        );
     }
 }
