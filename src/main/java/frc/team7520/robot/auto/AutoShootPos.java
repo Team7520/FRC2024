@@ -20,8 +20,7 @@ public class AutoShootPos extends Command {
 
     @Override
     public void initialize() {
-        shooterSubsystem.setPivotPosition(desiredPos);
-        shooterSubsystem.setTraversePosition(desiredPos);
+        shooterSubsystem.setTurretPosition(desiredPos);
     }
 
     @Override
