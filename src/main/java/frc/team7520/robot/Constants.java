@@ -6,9 +6,12 @@ package frc.team7520.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import lombok.Getter;
 import swervelib.math.Matter;
 import swervelib.parser.PIDFConfig;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -27,6 +30,9 @@ public final class Constants {
     public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; //s, 20ms + 110ms sprk max velocity lag
     public static final double MAX_SPEED  = Units.feetToMeters(16);
+
+    public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+
     public static final class LimeLightConstants {
         public static final String name = "limelight";
     };
@@ -147,35 +153,32 @@ public final class Constants {
 
         public static final int colourSensorSensedProximity = 145;
 
+
+        @Getter
         public enum Position {
-            REST(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(0))), //DO NOT CHANGE
-            DRIVE(new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(-95))),
-            SUBWOOFERCENTER(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(0))),
-            SUBWOOFERLEFT(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(95))),
-            SUBWOOFERRIGHT(new Rotation2d(Math.toRadians(77.6)), new Rotation2d(Math.toRadians(-95))),
-            WINGLINERED(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(42.3))),
-            WINGLINEBLUE(new Rotation2d(Math.toRadians(35)), new Rotation2d(Math.toRadians(-42.3))),
-            PODIUMRED(new Rotation2d(Math.toRadians(44.9316)), new Rotation2d(Math.toRadians(25))),
-            PODIUMBLUE(new Rotation2d(Math.toRadians(44.9316)), new Rotation2d(Math.toRadians(-25))),
-            NOTECENTER(new Rotation2d(Math.toRadians(51.9326)), new Rotation2d(Math.toRadians(0))),
-            AMP(new Rotation2d(Math.toRadians(72.4453)), new Rotation2d(Math.toRadians(0)));
+            // Use Rotation2d.fromDegrees for more intuitive degree handling
+            REST(0, 0), // DO NOT CHANGE
+            DRIVE(0, -95),
+            SUBWOOFERCENTER(77.6, 0),
+            SUBWOOFERLEFT(77.6, 95),
+            SUBWOOFERRIGHT(77.6, -95),
+            WINGLINERED(35, 42.3),
+            WINGLINEBLUE(35, -42.3),
+            PODIUMRED(44.9316, 25),
+            PODIUMBLUE(44.9316, -25),
+            NOTECENTER(51.9326, 0),
+            AMP(72.4453, 0);
 
-            Rotation2d pivot;
-            Rotation2d traverse;
+            private final Rotation2d pivot;
+            private final Rotation2d traverse;
 
-            Position(Rotation2d pivot, Rotation2d traverse) {
-                this.pivot = pivot;
-                this.traverse = traverse;
-            }
-
-            public Rotation2d getPivot() {
-                return pivot;
-            }
-
-            public Rotation2d getTraverse() {
-                return traverse;
+            // Overloaded constructor to accept doubles in degrees
+            Position(double pivotDegrees, double traverseDegrees) {
+                this.pivot = Rotation2d.fromDegrees(pivotDegrees);
+                this.traverse = Rotation2d.fromDegrees(traverseDegrees);
             }
         }
+
 
         public static class PivotConstants {
             public static final int CAN_ID = 21;

@@ -28,7 +28,7 @@ public class Shooter extends Command {
         this.povSup = povSup;
         this.noteSup = noteSup;
         this.drivePosSup = drivePosSup;
-        
+
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(shooterSubsystem);
@@ -37,26 +37,27 @@ public class Shooter extends Command {
     public void turretPosition() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
-        if (povSup.getAsDouble() == 180) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.REST);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.REST);
-            return;
+        double povValue = povSup.getAsDouble();
+        Constants.ShooterConstants.Position position;
+
+        switch ((int) povValue) {
+            case 180:
+                position = Constants.ShooterConstants.Position.REST;
+                break;
+            case 0:
+                position = Constants.ShooterConstants.Position.SUBWOOFERCENTER;
+                break;
+            case 270:
+                position = Constants.ShooterConstants.Position.SUBWOOFERLEFT;
+                break;
+            case 90:
+                position = Constants.ShooterConstants.Position.SUBWOOFERRIGHT;
+                break;
+            default:
+                position = Constants.ShooterConstants.Position.REST; // replace with your default position
         }
-        if (povSup.getAsDouble() == 0) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERCENTER);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERCENTER);
-            return;
-        }
-        if (povSup.getAsDouble() == 270) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERLEFT);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERLEFT);
-            return;
-        }
-        if (povSup.getAsDouble() == 90) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.SUBWOOFERRIGHT);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.SUBWOOFERRIGHT);
-            return;
-        }
+
+        shooterSubsystem.setTurretPosition(position);
         // if (wingLingPosSup.getAsBoolean()) {
         //     if (alliance.get() == Alliance.Red) {
         //         shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.WINGLINERED);
@@ -72,26 +73,22 @@ public class Shooter extends Command {
         // }
         if (podiumPosSup.getAsBoolean()) {
             if (alliance.get() == Alliance.Red){
-                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUMRED);
-                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUMRED);
+                shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.PODIUMRED);
             }
 
             else if (alliance.get() == Alliance.Blue) {
-                shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.PODIUMBLUE);
-                shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.PODIUMBLUE);
+                shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.PODIUMBLUE);
             }
             return;
         }
 
         if (noteSup.getAsBoolean()) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.NOTECENTER);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.NOTECENTER);
+            shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.NOTECENTER);
             return;
         }
 
         if (drivePosSup.getAsBoolean()) {
-            shooterSubsystem.setPivotPosition(Constants.ShooterConstants.Position.DRIVE);
-            shooterSubsystem.setTraversePosition(Constants.ShooterConstants.Position.DRIVE);
+            shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.DRIVE);
             return;
         }
 
@@ -109,7 +106,7 @@ public class Shooter extends Command {
         if (feederSup.getAsBoolean()) {
             throttle = 0.65;
         }
-        shooterSubsystem.setSpeed(throttle, false);  
+        shooterSubsystem.setSpeed(throttle, false);
 
         // SmartDashboard.putBoolean("WingSup", wingLingPosSup.getAsBoolean());
         SmartDashboard.putBoolean("PodSup", podiumPosSup.getAsBoolean());

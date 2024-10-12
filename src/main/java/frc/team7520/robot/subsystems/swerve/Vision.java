@@ -14,8 +14,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.team7520.robot.Constants;
 import frc.team7520.robot.Robot;
 import java.awt.Desktop;
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class Vision
     /**
      * April Tag Field Layout of the year.
      */
-    public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    public static final AprilTagFieldLayout fieldLayout = Constants.aprilTagFieldLayout;
 
 
     /**

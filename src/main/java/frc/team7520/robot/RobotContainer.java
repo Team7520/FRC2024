@@ -8,7 +8,6 @@ package frc.team7520.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,9 +40,6 @@ import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 import frc.team7520.robot.Constants.ShooterConstants;
 import frc.team7520.robot.Constants.ShooterConstants.Position;
 
-import java.io.File;
-
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -54,8 +50,7 @@ import java.io.File;
 public class RobotContainer
 {
     // Subsystems
-    private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-            "swerve/neo"));
+    public final SwerveSubsystem drivebase = SwerveSubsystem.getInstance();
 
     private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
