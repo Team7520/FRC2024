@@ -88,13 +88,13 @@ public class RobotContainer
         );
 
     private final Sensor sensor = new Sensor(
-        sensorSubsystem, 
-        LEDSubsystem, 
-        sensorSubsystem::getBeamBreak, 
+        sensorSubsystem,
+        LEDSubsystem,
+        sensorSubsystem::getBeamBreak,
         sensorSubsystem::getColorSensorProximity
         );
 
-    private final Shooter shooter = new Shooter(shooterSubsystem, 
+    private final Shooter shooter = new Shooter(shooterSubsystem,
         operatorController::getPOV,
         operatorController::getLeftBumper,
         operatorController::getYButton,
@@ -115,7 +115,7 @@ public class RobotContainer
         configureBindings();
 
         // Left joystick is the angle of the robot
-         
+
         AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                 // Applies deadbands and inverts controls because joysticks
                 // are back-right positive while robot
@@ -152,14 +152,16 @@ public class RobotContainer
 
         registerNamedCommands();
 
-        autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("Safe(SnapBack)", true));
-        autoChooser.addOption("Shoot", drivebase.getPPAutoCommand("ShootTest", true));
-        autoChooser.addOption("Feeder Test", drivebase.getPPAutoCommand("FeederTest", true));
-        autoChooser.addOption("4NoteAutoBlue", drivebase.getPPAutoCommand("4NoteAuto(BLUE)", true));
-        autoChooser.addOption("4NoteAutoRed", drivebase.getPPAutoCommand("4NoteAuto(RED)", true));
-        autoChooser.addOption("CenterAutoBlue", drivebase.getPPAutoCommand("CenterAuto(BLUE)", true));
-        autoChooser.addOption("CenterAutoRed", drivebase.getPPAutoCommand("CenterAuto(RED)", true));
-        
+
+        // TODO: Make real autos with auto mirror
+        autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("Safe(SnapBack)"));
+        autoChooser.addOption("Shoot", drivebase.getPPAutoCommand("ShootTest"));
+        autoChooser.addOption("Feeder Test", drivebase.getPPAutoCommand("FeederTest"));
+        autoChooser.addOption("4NoteAutoBlue", drivebase.getPPAutoCommand("4NoteAuto(BLUE)"));
+        autoChooser.addOption("4NoteAutoRed", drivebase.getPPAutoCommand("4NoteAuto(RED)"));
+        autoChooser.addOption("CenterAutoBlue", drivebase.getPPAutoCommand("CenterAuto(BLUE)"));
+        autoChooser.addOption("CenterAutoRed", drivebase.getPPAutoCommand("CenterAuto(RED)"));
+
         SmartDashboard.putData(autoChooser);
         // SmartDashboard.putBoolean("Shooting", true);
     }
@@ -218,7 +220,7 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        
+
         return autoChooser.getSelected();
         // return new SequentialCommandGroup(
         //         new ParallelCommandGroup(

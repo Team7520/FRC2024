@@ -21,14 +21,14 @@ public class Amp extends SequentialCommandGroup {
                     new WaitCommand(0.3)
                 ),
                 new ParallelRaceGroup(
-                    new AutoShoot(0.127), 
+                    new AutoShoot(0.127),
                     new AutoFeeder(0.9, 1).until(() -> SensorSubsystem.getInstance().getColorSensorProximity() < ShooterConstants.colourSensorSensedProximity)
                 ),
                 new ParallelRaceGroup(
-                    new WaitCommand(0.1), 
+                    new WaitCommand(0.1),
                     new AutoShootPos(ShooterConstants.Position.REST)
                 ),
-                new InstantCommand(() -> ShooterSubsystem.getInstance().stopShooting())
+                ShooterSubsystem.getInstance().stopShooting()
         );
     }
 }

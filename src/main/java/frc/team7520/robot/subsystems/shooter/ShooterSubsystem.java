@@ -1,38 +1,21 @@
 package frc.team7520.robot.subsystems.shooter;
 
 
-import java.io.IOError;
-
-import javax.management.relation.Relation;
-
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
-import frc.team7520.robot.Constants.IntakeConstants;
 import frc.team7520.robot.Constants.ShooterConstants;
 import frc.team7520.robot.Constants.ShooterConstants.PivotConstants;
 import frc.team7520.robot.Constants.ShooterConstants.TraverseConstants;
@@ -43,22 +26,16 @@ public class ShooterSubsystem extends SubsystemBase {
     // constructor must appear before the "INSTANCE" variable so that they are initialized
     // before the constructor is called when the "INSTANCE" variable initializes.
 
-    private TalonFX botShooterMotor;
-    private TalonFX topShooterMotor;
-    private TalonFX pivotMotor;
-    
-    private TalonFX traverseMotor;
-    private SparkPIDController botShooterPID;
-    private SparkPIDController topShooterPID;
+    private final TalonFX shooterMotorBot;
+    private final TalonFX shooterMotorTop;
+    private final TalonFX pivotMotor;
 
-    // private RelativeEncoder pivotEncoder;
-    private RelativeEncoder botShooterEncoder;
-    private RelativeEncoder topShooterEncoder;
+    private final TalonFX traverseMotor;
 
     public Rotation2d desiredPivotPos = new Rotation2d(0);
     public Rotation2d desiredTraversePos = new Rotation2d(0);
 
-    private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(100);
+    private final SlewRateLimiter speedLimiter = new SlewRateLimiter(100);
 
     /**
      * The Singleton instance of this shooterSubsystem. Code should use
@@ -75,81 +52,6 @@ public class ShooterSubsystem extends SubsystemBase {
     @SuppressWarnings("WeakerAccess")
     public static ShooterSubsystem getInstance() {
         return INSTANCE;
-    }
-
-    /**
-     * Creates a new instance of this shooterSubsystem. This constructor
-     * is private since this class is a Singleton. Code should use
-     * the {@link #getInstance()} method to get the singleton instance.
-     */
-    private ShooterSubsystem() {
-        pivotMotor = new TalonFX(PivotConstants.CAN_ID);
-        traverseMotor = new TalonFX(TraverseConstants.CAN_ID);
-
-        configPivot(pivotMotor);
-        configTraverse(traverseMotor);
-        
-        botShooterMotor = new TalonFX(ShooterConstants.shooterBotID); // left = bot
-        topShooterMotor = new TalonFX(ShooterConstants.shooterTopID);
-        
-        botShooterMotor.setInverted(true);
-        topShooterMotor.setInverted(true);
-    }
-
-    public void setHorizontalSpeed(double speed){
-        traverseMotor.set(speed);
-    }
-    public void setPivotSpeed(double speed) {
-        pivotMotor.set(speed);
-    }
-    
-    public void setSpeed(double speed, boolean closedLoop) {
-        speed = mSpeedLimiter.calculate(speed);
-
-        if (closedLoop) {
-            speed *= Constants.ShooterConstants.MAX_RPM;
-
-            botShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
-            topShooterPID.setReference(speed, CANSparkBase.ControlType.kVelocity);
-        } else {
-            botShooterMotor.set(speed);
-            topShooterMotor.set(speed);
-        }
-    }
-
-    public void setPivotPosition(ShooterConstants.Position position) {
-        desiredPivotPos = position.getPivot();
-        // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
-        final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
-        pivotMotor.setControl(moveRequest.withPosition(desiredPivotPos.getDegrees()));
-    }
-
-    public void setTraversePosition(ShooterConstants.Position position) {
-        desiredTraversePos = position.getTraverse();
-        // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
-        final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
-        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getDegrees()));
-    }
-
-    public void stopShooting() {
-        botShooterMotor.stopMotor();
-        topShooterMotor.stopMotor();
-    }
-
-    public void stopPivot() {
-        pivotMotor.stopMotor();
-    }
-
-    public double getPivotEncoder() {
-        return pivotMotor.getPosition().getValueAsDouble();
-    }
-    
-    public double getTraverseEncoder() {
-        return traverseMotor.getPosition().getValueAsDouble();
-    }
-
-    public Rotation2d getDesiredPivotPosition() {
-        return desiredPivotPos;
     }
 
     private void configPivot(TalonFX pivotMotor) {
@@ -210,11 +112,76 @@ public class ShooterSubsystem extends SubsystemBase {
         traverseMotor.getConfigurator().apply(motorConfigs);
         traverseMotor.getConfigurator().apply(tlnfxConfigs);
         traverseMotor.getConfigurator().apply(slot0Configs);
-        traverseMotor.getConfigurator().apply(motionMagicConfigs);        
+        traverseMotor.getConfigurator().apply(motionMagicConfigs);
 
         traverseMotor.setInverted(true);
 
         traverseMotor.setPosition(0);
+    }
+
+    /**
+     * Creates a new instance of this shooterSubsystem. This constructor
+     * is private since this class is a Singleton. Code should use
+     * the {@link #getInstance()} method to get the singleton instance.
+     */
+    private ShooterSubsystem() {
+        pivotMotor = new TalonFX(PivotConstants.CAN_ID);
+        traverseMotor = new TalonFX(TraverseConstants.CAN_ID);
+
+        configPivot(pivotMotor);
+        configTraverse(traverseMotor);
+
+        shooterMotorBot = new TalonFX(ShooterConstants.shooterBotID); // left = bot
+        shooterMotorTop = new TalonFX(ShooterConstants.shooterTopID);
+
+        shooterMotorBot.setInverted(true);
+        shooterMotorTop.setInverted(true);
+    }
+
+    public double getPivotEncoder() {
+        return pivotMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getTraverseEncoder() {
+        return traverseMotor.getPosition().getValueAsDouble();
+    }
+
+    public Rotation2d getDesiredPivotPosition() {
+        return desiredPivotPos;
+    }
+
+    public void setSpeed(double speed, boolean closedLoop) {
+        speed = speedLimiter.calculate(speed);
+
+        if (closedLoop) {
+            speed *= Constants.ShooterConstants.MAX_RPM;
+
+            // TODO: Implement closed loop control
+        } else {
+            shooterMotorBot.set(speed);
+            shooterMotorTop.set(speed);
+        }
+    }
+
+    public void setPivotPosition(ShooterConstants.Position position) {
+        desiredPivotPos = position.getPivot();
+        // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
+        final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
+        pivotMotor.setControl(moveRequest.withPosition(desiredPivotPos.getDegrees()));
+    }
+
+    public void setTraversePosition(ShooterConstants.Position position) {
+        desiredTraversePos = position.getTraverse();
+        // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
+        final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
+        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getDegrees()));
+    }
+
+    public InstantCommand stopShooting() {
+        return new InstantCommand(() -> {
+            shooterMotorBot.stopMotor();
+            shooterMotorTop.stopMotor();
+        });
     }
 
     @Override
@@ -229,7 +196,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("traverseVel", traverseMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("traverseVoltage", traverseMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("traverseCurr", traverseMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("desiredtraversePos", desiredTraversePos.getDegrees());
+        SmartDashboard.putNumber("desiredTraversePos", desiredTraversePos.getDegrees());
         SmartDashboard.putNumber("traverseClosedLoopError", traverseMotor.getClosedLoopError().getValueAsDouble());
     }
 }

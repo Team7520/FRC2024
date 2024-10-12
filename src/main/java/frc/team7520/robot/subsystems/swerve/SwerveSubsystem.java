@@ -6,7 +6,10 @@ package frc.team7520.robot.subsystems.swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -35,6 +38,9 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static frc.team7520.robot.Constants.Telemetry.SWERVE_VERBOSITY;
@@ -173,17 +179,40 @@ public class SwerveSubsystem extends SubsystemBase {
     /**
      * Get the autonomous command for the robot.
      * @param autoName       Name of the auto file.
-     * @param setOdomToStart Set the odometry position to the start of the path.
      * @return {@link PathPlannerAuto} command.
      */
-    public Command getPPAutoCommand(String autoName, boolean setOdomToStart) {
-        if (setOdomToStart) {
-            SmartDashboard.putNumber("HeadingFromFile", -1);
-//            resetOdometry(PathPlannerAuto.getStaringPoseFromAutoFile(autoName));
-        }
+    public Command getPPAutoCommand(String autoName) {
         return new PathPlannerAuto(autoName);
     }
 
+    public Command goToPose(Pose2d targetPose) {
+        List<Translation2d> waypoints = PathPlannerPath.bezierFromPoses(
+                new Pose2d(getPose().getTranslation(), targetPose.getRotation()),
+                targetPose
+        );
+
+        // Make sure the rotation target is always archived first
+        List<RotationTarget> rotationTargets = new ArrayList<>();
+
+        rotationTargets.add(new RotationTarget(0.5, targetPose.getRotation()));
+
+
+
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                rotationTargets,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                new PathConstraints(1.0, 1.0, 2 * Math.PI, 2 * Math.PI), //Global constraints
+                new GoalEndState(0.0, targetPose.getRotation()),
+                false,
+                Rotation2d.fromDegrees(0)
+        );
+
+        path.preventFlipping = true;
+
+        return getPathCommand("GoToPose", false);
+    }
 
 
     /**
@@ -235,13 +264,7 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.drive(velocity);
     }
 
-    @Override
-    public void periodic() {
-    }
 
-    @Override
-    public void simulationPeriodic() {
-    }
 
     /**
      * Get the swerve drive kinematics object.
@@ -261,8 +284,8 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d initialHolonomicPose) {
 //        SmartDashboard.putNumber("ResetHeading", initialHolonomicPose.getRotation().getDegrees());
-
-        swerveDrive.setGyro(new Rotation3d(0, 0, initialHolonomicPose.getRotation().getRadians()));
+        // Always face 0deg to red at start
+//        swerveDrive.setGyro(new Rotation3d(0, 0, initialHolonomicPose.getRotation().getRadians()));
 
         swerveDrive.resetOdometry(initialHolonomicPose);
     }
@@ -433,6 +456,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setGyro(Rotation2d yaw){
         swerveDrive.setGyro(new Rotation3d(0, 0, yaw.getRadians()));
+    }
+
+    @Override
+    public void periodic() {
+
+    }
+
+    @Override
+    public void simulationPeriodic() {
     }
 
 }
