@@ -7,11 +7,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.revrobotics.CANSparkBase;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +17,11 @@ import frc.team7520.robot.Constants;
 import frc.team7520.robot.Constants.ShooterConstants;
 import frc.team7520.robot.Constants.ShooterConstants.PivotConstants;
 import frc.team7520.robot.Constants.ShooterConstants.TraverseConstants;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ShooterSubsystem extends SubsystemBase {
 
     // With eager singleton initialization, any static variables/fields used in the
@@ -138,12 +140,17 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotorTop.setInverted(true);
     }
 
-    public double getPivotEncoder() {
-        return pivotMotor.getPosition().getValueAsDouble();
+
+    public Rotation2d getPivotEncoder() {
+        return Rotation2d.fromRotations(pivotMotor.getPosition().getValueAsDouble());
     }
 
-    public double getTraverseEncoder() {
-        return traverseMotor.getPosition().getValueAsDouble();
+    public Rotation2d getTraverseEncoder() {
+        return Rotation2d.fromRotations(traverseMotor.getPosition().getValueAsDouble());
+    }
+
+    public Rotation3d getTurretPosition() {
+        return new Rotation3d(0, getPivotEncoder().getRadians(), getTraverseEncoder().getRadians());
     }
 
     public Rotation2d getDesiredPivotPosition() {
@@ -184,8 +191,11 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
+
     @Override
     public void periodic() {
+
+
         SmartDashboard.putNumber("pivotEncoder", getPivotEncoder());
         SmartDashboard.putNumber("pivotVel", pivotMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("pivotVoltage", pivotMotor.getMotorVoltage().getValueAsDouble());

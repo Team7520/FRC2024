@@ -7,18 +7,13 @@ package frc.team7520.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.team7520.robot.Constants.AmpConstants;
-import frc.team7520.robot.auto.AutoFeeder;
 import frc.team7520.robot.auto.AutoIntake;
 // import frc.team7520.robot.Constants.IntakeConstants;
 // import frc.team7520.robot.Constants.IntakeConstants.Position;
@@ -154,13 +149,13 @@ public class RobotContainer
 
 
         // TODO: Make real autos with auto mirror
-        autoChooser.setDefaultOption("Safe auto", drivebase.getPPAutoCommand("Safe(SnapBack)"));
-        autoChooser.addOption("Shoot", drivebase.getPPAutoCommand("ShootTest"));
-        autoChooser.addOption("Feeder Test", drivebase.getPPAutoCommand("FeederTest"));
-        autoChooser.addOption("4NoteAutoBlue", drivebase.getPPAutoCommand("4NoteAuto(BLUE)"));
-        autoChooser.addOption("4NoteAutoRed", drivebase.getPPAutoCommand("4NoteAuto(RED)"));
-        autoChooser.addOption("CenterAutoBlue", drivebase.getPPAutoCommand("CenterAuto(BLUE)"));
-        autoChooser.addOption("CenterAutoRed", drivebase.getPPAutoCommand("CenterAuto(RED)"));
+        autoChooser.setDefaultOption("Safe auto", drivebase.getAutonomousCommand("Safe(SnapBack)"));
+        autoChooser.addOption("Shoot", drivebase.getAutonomousCommand("ShootTest"));
+        autoChooser.addOption("Feeder Test", drivebase.getAutonomousCommand("FeederTest"));
+        autoChooser.addOption("4NoteAutoBlue", drivebase.getAutonomousCommand("4NoteAuto(BLUE)"));
+        autoChooser.addOption("4NoteAutoRed", drivebase.getAutonomousCommand("4NoteAuto(RED)"));
+        autoChooser.addOption("CenterAutoBlue", drivebase.getAutonomousCommand("CenterAuto(BLUE)"));
+        autoChooser.addOption("CenterAutoRed", drivebase.getAutonomousCommand("CenterAuto(RED)"));
 
         SmartDashboard.putData(autoChooser);
         // SmartDashboard.putBoolean("Shooting", true);

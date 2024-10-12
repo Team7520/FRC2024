@@ -7,6 +7,7 @@ package frc.team7520.robot.commands;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.team7520.robot.Constants;
 import frc.team7520.robot.subsystems.swerve.SwerveSubsystem;
 import swervelib.SwerveController;
 
@@ -58,7 +59,7 @@ public class TeleopDrive extends Command {
         SmartDashboard.putNumber("omega", angVelocity);
 
         // Drive using raw values.
-        swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
+        swerve.drive(new Translation2d(xVelocity * Constants.MAX_SPEED, yVelocity * Constants.MAX_SPEED),
                 angVelocity * controller.config.maxAngularVelocity,
                 driveMode.getAsBoolean());
     }
