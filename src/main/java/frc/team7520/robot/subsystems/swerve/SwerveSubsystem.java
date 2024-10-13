@@ -163,9 +163,10 @@ public class SwerveSubsystem extends SubsystemBase
                 swerveDrive.updateOdometry();
                 vision.updatePoseEstimation(swerveDrive);
 
-                // Update the vision's Bot to Camera transform based on shooter's current position
                 var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
-                Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(new Transform3d(originalBotToCamera.getTranslation(), shooterSubsystem.getTurretPosition()));
+
+                // Update the vision's Bot to Camera transform based on shooter's current position
+                Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(new Transform3d(new Translation3d(Units.inchesToMeters(7.5147), new Rotation3d(0, 0, shooterSubsystem.getTraverseEncoder().getRadians())).plus(new Translation3d(0, 0, 0)), new Rotation3d(originalBotToCamera.getRotation().getX(), originalBotToCamera.getRotation().getY(), shooterSubsystem.getTraverseEncoder().getRadians())));
 
             } else {
                 PhotonCamera shooterCamera = Vision.Cameras.SHOOTER_CAMERA.getCamera();
@@ -187,7 +188,6 @@ public class SwerveSubsystem extends SubsystemBase
 
                             // Set the initial rotation of the shooter
                             shooterSubsystem.getTraverseMotor().setPosition(new Rotation2d(initialVisionRotation.getZ()).getRotations());
-                            shooterSubsystem.getPivotMotor().setPosition(new Rotation2d(initialVisionRotation.getY()).getRotations());
                         }
                     }
                 }

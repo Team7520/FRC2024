@@ -106,7 +106,7 @@ public final class Constants {
         public enum Position {
             SHOOT(new Rotation2d(0), 1),
             INTAKE(new Rotation2d(Units.degreesToRadians(212.152317734808d)), -0.3),
-            AMP(new Rotation2d(Units.degreesToRadians(83.5138969421)), 0.495);
+            AMP(Rotation2d.fromDegrees(83.5138969421), 0.495);
 
             private final Rotation2d position;
             private final double speed;
@@ -202,7 +202,7 @@ public final class Constants {
         public static class TraverseConstants {
             public static final int CAN_ID = 16;
 
-            public static final double gearRatio = 80/7;
+            public static final double gearRatio = 80.0/7;
             public static final double degreeConversionFactor = 1/(gearRatio*3);
             public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
             public static final double kP = 0.3;
