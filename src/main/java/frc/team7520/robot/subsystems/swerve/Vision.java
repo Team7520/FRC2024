@@ -374,7 +374,7 @@ public class Vision
         /**
          * ShooterCamera
          */
-        SHOOTER_CAMERA("Shooter Camera",
+        SHOOTER_CAMERA("AprilCam",
                 new Rotation3d(),
                 new Translation3d(0, 0, 0),
                 VecBuilder.fill(0.1, 0.1, 0.1),

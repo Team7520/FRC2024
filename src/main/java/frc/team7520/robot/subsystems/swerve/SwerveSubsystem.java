@@ -70,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase
     /**
      * Enable vision odometry updates while driving.
      */
-    private final boolean visionDriveTest = false;
+    private final boolean visionDriveTest = true;
 
     /**
      * The Singleton instance of this shooterSubsystem. Code should use
@@ -92,24 +92,21 @@ public class SwerveSubsystem extends SubsystemBase
     private SwerveSubsystem(File directory)
     {
         // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
-        //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
         //  The encoder resolution per motor revolution is 1 per motor revolution.
-        double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8);
+        double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(Constants.Swerve.ANGLE_GEAR_RATIO, 1);
         // Motor conversion factor is (PI * WHEEL DIAMETER IN METERS) / (GEAR RATIO * ENCODER RESOLUTION).
-        //  In this case the wheel diameter is 4 inches, which must be converted to meters to get meters/second.
-        //  The gear ratio is 6.75 motor revolutions per wheel rotation.
         //  The encoder resolution per motor revolution is 1 per motor revolution.
-        double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
-        System.out.println("\"conversionFactors\": {");
-        System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
-        System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
+        double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), Constants.Swerve.DRIVE_GEAR_RATIO, 1);
+        System.out.println("\"conversionFactor\": {");
+        System.out.println("\t\"angle\": " + angleConversionFactor + ",");
+        System.out.println("\t\"drive\": " + driveConversionFactor);
         System.out.println("}");
 
         // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try
         {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED);
+            swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, angleConversionFactor, driveConversionFactor);
             // Alternative method if you don't want to supply the conversion factor via JSON files.
             // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
         } catch (Exception e)
@@ -147,7 +144,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public boolean visionInitialized() {
-        return initialVisionReadings.size() >= 20;
+        return initialVisionReadings.size() >= 1;
     }
 
 
@@ -166,7 +163,22 @@ public class SwerveSubsystem extends SubsystemBase
                 var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
 
                 // Update the vision's Bot to Camera transform based on shooter's current position
-                Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(new Transform3d(new Translation3d(Units.inchesToMeters(7.5147), new Rotation3d(0, 0, shooterSubsystem.getTraverseEncoder().getRadians())).plus(new Translation3d(0, 0, 0)), new Rotation3d(originalBotToCamera.getRotation().getX(), originalBotToCamera.getRotation().getY(), shooterSubsystem.getTraverseEncoder().getRadians())));
+                Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(
+                        new Transform3d(
+                                new Translation3d(
+                                        Units.inchesToMeters(7.5147),
+                                        new Rotation3d(
+                                                0,
+                                                0,
+                                                shooterSubsystem.getTraverseEncoder().getRadians()
+                                        )
+                                ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
+                                new Rotation3d(
+                                        originalBotToCamera.getRotation().getX(),
+                                        originalBotToCamera.getRotation().getY(),
+                                        shooterSubsystem.getTraverseEncoder().getRadians())
+                        )
+                );
 
             } else {
                 PhotonCamera shooterCamera = Vision.Cameras.SHOOTER_CAMERA.getCamera();
@@ -177,7 +189,7 @@ public class SwerveSubsystem extends SubsystemBase
                     if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
                         Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(), new Transform3d());
                         initialVisionReadings.add(robotPose.getRotation());
-                        if (initialVisionReadings.size() >= 20) {
+                        if (initialVisionReadings.size() >= 1) {
                             Rotation3d total = new Rotation3d();
                             for (Rotation3d reading : initialVisionReadings) {
                                 total = total.plus(reading);
