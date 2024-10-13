@@ -126,8 +126,7 @@ public final class Constants {
         }
 
         public static class WheelConstants {
-            public static final int IntakeBottomID = 25;
-            public static final int IntakeTopID = 26; // spin positive
+            public static final int IntakeID = 40;
             public static final int RingOneID = 14;
             public static final int RingTwoID = 15;
             public static final int FeederID = 42;

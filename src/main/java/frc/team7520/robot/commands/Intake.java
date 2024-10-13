@@ -49,7 +49,7 @@ public class Intake extends Command {
             intakeSubsystem.setFeederSpeed(1);
             intakeSubsystem.setRingSpeed(0.75);
         } else if (spinIntake.getAsBoolean() && sensorSubsystem.getColorSensorProximity() < ShooterConstants.colourSensorSensedProximity){
-            intakeSubsystem.setSpeed(0.6);
+            intakeSubsystem.setSpeed(0.5);
             intakeSubsystem.setRingSpeed(0.75);
             intakeSubsystem.setFeederSpeed(0.5);
         } else if (reverseIntake.getAsBoolean()){

@@ -174,7 +174,8 @@ public class RobotContainer
         NamedCommands.registerCommand("shooterRest", new AutoShootPos(Position.REST));
         NamedCommands.registerCommand("shoot", new ShootSequence());
         // NamedCommands.registerCommand("log", new InstantCommand(() -> System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee")));
-        NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).until(() -> sensorSubsystem.getColorSensorProximity() > ShooterConstants.colourSensorSensedProximity));
+        // NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).until(() -> sensorSubsystem.getColorSensorProximity() > ShooterConstants.colourSensorSensedProximity));
+        NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).raceWith(new WaitCommand(1)));
         // NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> new AutoIntake(0, 0, 0)));
     }
 

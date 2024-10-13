@@ -180,13 +180,15 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setPivotPosition(Rotation2d desiredPivotPos) {
         // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
         final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
-        pivotMotor.setControl(moveRequest.withPosition(desiredPivotPos.getRotations()));
+        pivotMotor.setControl(moveRequest.withPosition(desiredPivotPos.getDegrees()));
+        SmartDashboard.putNumber("desiredPivotPos", desiredPivotPos.getDegrees());
     }
 
     public void setTraversePosition(Rotation2d desiredTraversePos) {
         // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
         final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
-        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getRotations()));
+        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getDegrees()));
+        SmartDashboard.putNumber("desiredTraversePos", desiredTraversePos.getDegrees());
     }
 
     public void setTurretPosition(ShooterConstants.Position desiredTurretPos) {
@@ -281,13 +283,11 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("pivotVel", pivotMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("pivotVoltage", pivotMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("pivotCurr", pivotMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("desiredPivotPos", desiredPivotPos.getDegrees());
         SmartDashboard.putNumber("pivotClosedLoopError", pivotMotor.getClosedLoopError().getValueAsDouble());
         SmartDashboard.putNumber("traverseEncoder", getTraverseEncoder().getDegrees());
         SmartDashboard.putNumber("traverseVel", traverseMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("traverseVoltage", traverseMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("traverseCurr", traverseMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("desiredTraversePos", desiredTraversePos.getDegrees());
         SmartDashboard.putNumber("traverseClosedLoopError", traverseMotor.getClosedLoopError().getValueAsDouble());
     }
 }

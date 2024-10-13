@@ -26,8 +26,7 @@ import frc.team7520.robot.Constants.ShooterConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    public TalonFX TopMotor = new TalonFX(IntakeConstants.WheelConstants.IntakeTopID);
-    public TalonFX BotMotor = new TalonFX(IntakeConstants.WheelConstants.IntakeBottomID);
+    public TalonFX IntakeMotor = new TalonFX(IntakeConstants.WheelConstants.IntakeID);
     public TalonFX RingOneMotor = new TalonFX(IntakeConstants.WheelConstants.RingOneID);
     public TalonFX RingTwoMotor = new TalonFX(IntakeConstants.WheelConstants.RingTwoID);
     public TalonFX FeederMotor = new TalonFX(IntakeConstants.WheelConstants.FeederID);
@@ -47,7 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /** Creates a new ExampleSubsystem. */
     private IntakeSubsystem() {
-        BotMotor.setInverted(true);
         RingOneMotor.setInverted(false);
         FeederMotor.setInverted(true);
     }
@@ -63,8 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setSpeed(double speed, boolean closedLoop) {
-        TopMotor.set(speed);
-        BotMotor.set(speed);
+        IntakeMotor.set(speed);
     }
 
     public void setRingSpeed(double speed){
