@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.team7520.robot.Constants;
 import frc.team7520.robot.Robot;
@@ -375,7 +376,7 @@ public class Vision
          * ShooterCamera
          */
         SHOOTER_CAMERA("AprilCam",
-                new Rotation3d(),
+                new Rotation3d(0, Units.degreesToRadians(20), 0),
                 new Translation3d(0, 0, 0),
                 VecBuilder.fill(0.1, 0.1, 0.1),
                 VecBuilder.fill(0.1, 0.1, 0.1));

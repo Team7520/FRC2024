@@ -144,7 +144,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public boolean visionInitialized() {
-        return initialVisionReadings.size() >= 1;
+        return true;
     }
 
 
@@ -156,54 +156,30 @@ public class SwerveSubsystem extends SubsystemBase
         // When vision is enabled we must manually update odometry in SwerveDrive
         if (visionDriveTest)
         {
-            if (visionInitialized()) {
-                swerveDrive.updateOdometry();
-                vision.updatePoseEstimation(swerveDrive);
+            swerveDrive.updateOdometry();
+            vision.updatePoseEstimation(swerveDrive);
 
-                var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
+            System.out.println("Updateing odm");
 
-                // Update the vision's Bot to Camera transform based on shooter's current position
-                Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(
-                        new Transform3d(
-                                new Translation3d(
-                                        Units.inchesToMeters(7.5147),
-                                        new Rotation3d(
-                                                0,
-                                                0,
-                                                shooterSubsystem.getTraverseEncoder().getRadians()
-                                        )
-                                ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
-                                new Rotation3d(
-                                        originalBotToCamera.getRotation().getX(),
-                                        originalBotToCamera.getRotation().getY(),
-                                        shooterSubsystem.getTraverseEncoder().getRadians())
-                        )
-                );
+            var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
 
-            } else {
-                PhotonCamera shooterCamera = Vision.Cameras.SHOOTER_CAMERA.getCamera();
-                PhotonPipelineResult results = shooterCamera.getLatestResult();
-                if (results.hasTargets()){
-                    PhotonTrackedTarget target = results.getBestTarget();
-
-                    if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
-                        Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(), new Transform3d());
-                        initialVisionReadings.add(robotPose.getRotation());
-                        if (initialVisionReadings.size() >= 1) {
-                            Rotation3d total = new Rotation3d();
-                            for (Rotation3d reading : initialVisionReadings) {
-                                total = total.plus(reading);
-                            }
-                            total = total.div(initialVisionReadings.size());
-                            // Roll is always 0
-                            initialVisionRotation = new Rotation3d(0, total.getY(), total.getZ()).minus(swerveDrive.getGyroRotation3d());
-
-                            // Set the initial rotation of the shooter
-                            shooterSubsystem.getTraverseMotor().setPosition(new Rotation2d(initialVisionRotation.getZ()).getRotations());
-                        }
-                    }
-                }
-            }
+            // Update the vision's Bot to Camera transform based on shooter's current position
+            Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(
+                    new Transform3d(
+                            new Translation3d(
+                                    Units.inchesToMeters(7.5147),
+                                    new Rotation3d(
+                                            0,
+                                            0,
+                                            shooterSubsystem.getTraverseEncoder().plus(Rotation2d.fromDegrees(180)).getRadians()
+                                    )
+                            ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
+                            new Rotation3d(
+                                    originalBotToCamera.getRotation().getX(),
+                                    originalBotToCamera.getRotation().getY(),
+                                    shooterSubsystem.getTraverseEncoder().plus(Rotation2d.fromDegrees(180)).getRadians())
+                    )
+            );
         }
     }
 

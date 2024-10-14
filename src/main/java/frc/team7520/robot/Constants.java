@@ -201,10 +201,10 @@ public final class Constants {
         public static class TraverseConstants {
             public static final int CAN_ID = 16;
 
-            public static final double gearRatio = 80.0/7;
-            public static final double degreeConversionFactor = 1/(gearRatio*3);
+            public static final double gearRatio = 14/160.0;
+            public static final double degreeConversionFactor = 1/(gearRatio);
             public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
-            public static final double kP = 0.3;
+            public static final double kP = 80;
             public static final double kI = 0;
             public static final double kD = 0;
             public static final double kG = 0;
@@ -212,9 +212,9 @@ public final class Constants {
             public static final double kV = 0;
             public static final double kA = 0;
 
-            public static final double motionMagicVelocity = 100;
-            public static final double motionMagicAccel = 200;
-            public static final double motionMagicJerk = 2000;
+            public static final double motionMagicVelocity = 10;
+            public static final double motionMagicAccel = 200/50;
+            public static final double motionMagicJerk = 2000/3;
         }
     }
 

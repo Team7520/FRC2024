@@ -3,6 +3,7 @@ package frc.team7520.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final SlewRateLimiter speedLimiter = new SlewRateLimiter(100);
 
-    private final SwerveSubsystem swerveDrive = SwerveSubsystem.getInstance();
+    private SwerveSubsystem swerveDrive = SwerveSubsystem.getInstance();
 
     /**
      * The Singleton instance of this shooterSubsystem. Code should use
@@ -75,6 +76,10 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.getConfigurator().apply(new TalonFXConfiguration());
         motorConfigs.NeutralMode = PivotConstants.neutralMode;
         tlnfxConfigs.Feedback.SensorToMechanismRatio = PivotConstants.degreeConversionFactor;
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitThreshold(77.6)
+        );
 
         slot0Configs.kP = PivotConstants.kP;
         slot0Configs.kI = PivotConstants.kI;
@@ -83,6 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
         slot0Configs.kS = PivotConstants.kS;
         slot0Configs.kV = PivotConstants.kV;
         slot0Configs.kA = PivotConstants.kA;
+
 
         motionMagicConfigs.MotionMagicCruiseVelocity = PivotConstants.motionMagicVelocity;
         motionMagicConfigs.MotionMagicAcceleration = PivotConstants.motionMagicAccel;
@@ -96,6 +102,8 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.setInverted(true);
 
         pivotMotor.setPosition(0);
+
+        setPivotPosition(Rotation2d.fromDegrees(77.6));
     }
 
     private void configTraverse(TalonFX traverseMotor) {
@@ -108,6 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motorConfigs.NeutralMode = TraverseConstants.neutralMode;
         tlnfxConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         tlnfxConfigs.Feedback.SensorToMechanismRatio = TraverseConstants.degreeConversionFactor;
+
 
         slot0Configs.kP = TraverseConstants.kP;
         slot0Configs.kI = TraverseConstants.kI;
@@ -152,7 +161,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
     public Rotation2d getPivotEncoder() {
-        return Rotation2d.fromRotations(pivotMotor.getPosition().getValueAsDouble());
+        return Rotation2d.fromDegrees(pivotMotor.getPosition().getValueAsDouble());
     }
 
     public Rotation2d getTraverseEncoder() {
@@ -187,7 +196,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTraversePosition(Rotation2d desiredTraversePos) {
         // final PositionVoltage moveRequest = new PositionVoltage(0).withSlot(0);
         final MotionMagicVoltage moveRequest = new MotionMagicVoltage(0).withSlot(0);
-        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getDegrees()));
+        traverseMotor.setControl(moveRequest.withPosition(desiredTraversePos.getRotations()));
         SmartDashboard.putNumber("desiredTraversePos", desiredTraversePos.getDegrees());
     }
 
@@ -214,7 +223,12 @@ public class ShooterSubsystem extends SubsystemBase {
         int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getDistanceToPose
         Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+        if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
         return swerveDrive.getPose().getTranslation().getDistance(speakerAprilTagPose.toPose2d().getTranslation());
+    }
+
+    public Rotation2d getPitchWithDistance(double distance){
+        return Rotation2d.fromDegrees(108-(36.9*distance)+(4.26*distance*distance));
     }
 
     /**
@@ -227,6 +241,7 @@ public class ShooterSubsystem extends SubsystemBase {
         int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+        if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
         Translation2d relativeTrl         = speakerAprilTagPose.toPose2d().relativeTo(swerveDrive.getPose()).getTranslation();
         return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getHeading());
     }
@@ -236,16 +251,16 @@ public class ShooterSubsystem extends SubsystemBase {
         int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+        if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
         return speakerAprilTagPose.relativeTo(new Pose3d(swerveDrive.getPose())).getTranslation();
     }
 
     /**
      * Aim the robot at the speaker.
      *
-     * @param tolerance Tolerance in degrees.
      * @return Command to turn the robot to the speaker.
      */
-    public Command aimAtSpeaker(double tolerance)
+    public Command aimAtSpeaker()
     {
         return run(
                 () -> {
@@ -268,8 +283,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Rotation2d targetYaw = new Rotation2d(target.getX(), target.getY());
         Rotation2d targetPitch = new Rotation2d(target.getX(), target.getZ());
         // Aim at the target.
-        setTraversePosition(targetYaw);
-        setPivotPosition(targetPitch);
+        setTraversePosition(targetYaw.plus(Rotation2d.fromDegrees(180)));
+        setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
 
     }
 
@@ -277,6 +292,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        SmartDashboard.putNumber("Distance To Speaker", getDistanceToSpeaker());
+
 
 
         SmartDashboard.putNumber("pivotEncoder", getPivotEncoder().getDegrees());
