@@ -16,12 +16,14 @@ import com.revrobotics.ColorMatch;
 
 public class SensorSubsystem extends SubsystemBase {
     private final static SensorSubsystem INSTANCE = new SensorSubsystem();
-    
+
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
     DigitalInput IntakeBeamBreakInput = new DigitalInput(0);
+
+    DigitalInput ShooterBeamBreakInput = new DigitalInput(1);
 
     @SuppressWarnings("WeakerAccess")
     public static SensorSubsystem getInstance() {
@@ -32,15 +34,10 @@ public class SensorSubsystem extends SubsystemBase {
 
     }
 
-    public int getColorSensorProximity(){
-        int proximity = m_colorSensor.getProximity();
-        SmartDashboard.putNumber("Proximity", proximity);
-        if (proximity > ShooterConstants.colourSensorSensedProximity) {
-            SmartDashboard.putBoolean("NoteDetectedShooter", true);
-        } else{
-            SmartDashboard.putBoolean("NoteDetectedShooter", false);
-        }
-        return proximity;
+    public boolean getColorSensorProximity(){
+        boolean noteDetected = ShooterBeamBreakInput.get();
+        SmartDashboard.putBoolean("NoteDetectedIntake", !noteDetected);
+        return !noteDetected;
     }
 
     public boolean getBeamBreak(){
@@ -48,4 +45,4 @@ public class SensorSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("NoteDetectedIntake", !noteDetected);
         return !noteDetected;
     }
-}   
+}

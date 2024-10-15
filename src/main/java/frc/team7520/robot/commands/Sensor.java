@@ -13,9 +13,9 @@ public class Sensor extends Command {
     private final SensorSubsystem sensorSubsystem;
     private final LED LED;
     private final BooleanSupplier isInIntake;
-    private final IntSupplier proximity;
+    private final BooleanSupplier proximity;
 
-    public Sensor(SensorSubsystem sensorSubsystem, LED LED, BooleanSupplier isInIntake, IntSupplier proximity) {
+    public Sensor(SensorSubsystem sensorSubsystem, LED LED, BooleanSupplier isInIntake, BooleanSupplier proximity) {
         this.sensorSubsystem = sensorSubsystem;
         this.LED = LED;
         this.isInIntake = isInIntake;
@@ -33,15 +33,15 @@ public class Sensor extends Command {
 
     @Override
     public void execute() {
-        if (proximity.getAsInt()>150){
+        if (proximity.getAsBoolean()){
             LED.noteInTurret();
         } else if(isInIntake.getAsBoolean()){
             LED.noteInIntake();
         } else {
             LED.idle();
         }
-        
-        
+
+
     }
 
     @Override

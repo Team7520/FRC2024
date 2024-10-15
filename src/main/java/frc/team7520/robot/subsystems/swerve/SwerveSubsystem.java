@@ -159,8 +159,6 @@ public class SwerveSubsystem extends SubsystemBase
             swerveDrive.updateOdometry();
             vision.updatePoseEstimation(swerveDrive);
 
-            System.out.println("Updateing odm");
-
             var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
 
             // Update the vision's Bot to Camera transform based on shooter's current position
@@ -171,13 +169,13 @@ public class SwerveSubsystem extends SubsystemBase
                                     new Rotation3d(
                                             0,
                                             0,
-                                            shooterSubsystem.getTraverseEncoder().plus(Rotation2d.fromDegrees(180)).getRadians()
+                                            shooterSubsystem.getTraverseEncoder().getRadians()
                                     )
                             ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
                             new Rotation3d(
                                     originalBotToCamera.getRotation().getX(),
                                     originalBotToCamera.getRotation().getY(),
-                                    shooterSubsystem.getTraverseEncoder().plus(Rotation2d.fromDegrees(180)).getRadians())
+                                    shooterSubsystem.getTraverseEncoder().getRadians())
                     )
             );
         }

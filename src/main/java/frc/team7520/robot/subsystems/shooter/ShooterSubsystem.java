@@ -1,10 +1,7 @@
 package frc.team7520.robot.subsystems.shooter;
 
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -72,6 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
         var motorConfigs = new MotorOutputConfigs();
         var slot0Configs = new Slot0Configs();
         var motionMagicConfigs = tlnfxConfigs.MotionMagic;
+        var currentLimitConfigs = new CurrentLimitsConfigs();
 
         pivotMotor.getConfigurator().apply(new TalonFXConfiguration());
         motorConfigs.NeutralMode = PivotConstants.neutralMode;
@@ -80,6 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(77.6)
         );
+
+
 
         slot0Configs.kP = PivotConstants.kP;
         slot0Configs.kI = PivotConstants.kI;
@@ -94,10 +94,14 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicAcceleration = PivotConstants.motionMagicAccel;
         motionMagicConfigs.MotionMagicJerk = PivotConstants.motionMagicJerk;
 
+        currentLimitConfigs.SupplyCurrentLimitEnable = true;
+        currentLimitConfigs.SupplyCurrentLimit = PivotConstants.currentLimit;
+
         pivotMotor.getConfigurator().apply(motorConfigs);
         pivotMotor.getConfigurator().apply(tlnfxConfigs);
         pivotMotor.getConfigurator().apply(slot0Configs);
         pivotMotor.getConfigurator().apply(motionMagicConfigs);
+        pivotMotor.getConfigurator().apply(currentLimitConfigs);
 
         pivotMotor.setInverted(true);
 
@@ -111,6 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
         var motorConfigs = new MotorOutputConfigs();
         var slot0Configs = new Slot0Configs();
         var motionMagicConfigs = tlnfxConfigs.MotionMagic;
+        var currentLimitConfigs = new CurrentLimitsConfigs();
 
         traverseMotor.getConfigurator().apply(new TalonFXConfiguration());
         motorConfigs.NeutralMode = TraverseConstants.neutralMode;
@@ -130,10 +135,14 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicAcceleration = TraverseConstants.motionMagicAccel;
         motionMagicConfigs.MotionMagicJerk = TraverseConstants.motionMagicJerk;
 
+        currentLimitConfigs.SupplyCurrentLimitEnable = true;
+        currentLimitConfigs.SupplyCurrentLimit = TraverseConstants.currentLimit;
+
         traverseMotor.getConfigurator().apply(motorConfigs);
         traverseMotor.getConfigurator().apply(tlnfxConfigs);
         traverseMotor.getConfigurator().apply(slot0Configs);
         traverseMotor.getConfigurator().apply(motionMagicConfigs);
+        traverseMotor.getConfigurator().apply(currentLimitConfigs);
 
         traverseMotor.setInverted(true);
 
@@ -283,7 +292,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Rotation2d targetYaw = new Rotation2d(target.getX(), target.getY());
         Rotation2d targetPitch = new Rotation2d(target.getX(), target.getZ());
         // Aim at the target.
-        setTraversePosition(targetYaw.plus(Rotation2d.fromDegrees(180)));
+        setTraversePosition(targetYaw);
         setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
 
     }

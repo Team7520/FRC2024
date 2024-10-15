@@ -86,8 +86,9 @@ public class RobotContainer
 
     private final Shooter shooter = new Shooter(shooterSubsystem,
         operatorController::getLeftTriggerAxis,
-            operatorController::getXButtonPressed,
-            operatorController::getYButtonPressed
+            operatorController::getXButton,
+            operatorController::getYButton,
+            operatorController::getPOV
         );
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -122,14 +123,16 @@ public class RobotContainer
         // like in video games
         // Easier to learn, harder to control
         // Not tested not used
-        TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
+        TeleopDrive teleopDrive = new TeleopDrive(drivebase,
                 () -> MathUtil.applyDeadband(driverController.getLeftY(),
                         OperatorConstants.LEFT_Y_DEADBAND),
                 () -> MathUtil.applyDeadband(driverController.getLeftX(),
                         OperatorConstants.LEFT_X_DEADBAND),
-                () -> driverController.getRawAxis(2), () -> true);
+                () -> MathUtil.applyDeadband(-driverController.getRightX(),
+                        OperatorConstants.RIGHT_X_DEADBAND)
+                , () -> true);
 
-        drivebase.setDefaultCommand(closedAbsoluteDrive);
+        drivebase.setDefaultCommand(teleopDrive);
         shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);

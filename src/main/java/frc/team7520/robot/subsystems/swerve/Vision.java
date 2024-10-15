@@ -77,7 +77,7 @@ public class Vision
     /**
      * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
      */
-    private final double maximumAmbiguity = 0.25;
+    private final double maximumAmbiguity = 0.1;
     /**
      * Field from {@link swervelib.SwerveDrive#field}
      */

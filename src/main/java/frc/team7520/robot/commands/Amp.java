@@ -22,7 +22,7 @@ public class Amp extends SequentialCommandGroup {
                 ),
                 new ParallelRaceGroup(
                     new AutoShoot(0.127),
-                    new AutoFeeder(0.9, 1).until(() -> SensorSubsystem.getInstance().getColorSensorProximity() < ShooterConstants.colourSensorSensedProximity)
+                    new AutoFeeder(0.9, 1).until(() -> !SensorSubsystem.getInstance().getColorSensorProximity())
                 ),
                 new ParallelRaceGroup(
                     new WaitCommand(0.1),

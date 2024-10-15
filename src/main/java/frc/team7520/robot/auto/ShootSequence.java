@@ -19,7 +19,7 @@ public class ShootSequence extends SequentialCommandGroup {
                 ),
                 new ParallelCommandGroup(
                     new WaitCommand(1),
-                    new AutoFeeder(0.9, 1).until(() -> SensorSubsystem.getInstance().getColorSensorProximity() < ShooterConstants.colourSensorSensedProximity)
+                    new AutoFeeder(0.9, 1).until(() -> !SensorSubsystem.getInstance().getColorSensorProximity())
                 ),
                 ShooterSubsystem.getInstance().stopShooting()
         );
