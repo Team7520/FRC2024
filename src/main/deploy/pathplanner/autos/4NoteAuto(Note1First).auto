@@ -18,7 +18,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "shootSubwooferCenter"
+                  "name": "setShootPosition"
                 }
               },
               {
@@ -74,7 +74,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "shootNoteCenter"
+                  "name": "setShootPosition"
                 }
               },
               {
@@ -130,7 +130,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "shootNoteCCW"
+                  "name": "setShootPosition"
                 }
               },
               {
@@ -186,7 +186,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "shootNoteCW"
+                  "name": "setShootPosition"
                 }
               },
               {

@@ -70,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase
     /**
      * Enable vision odometry updates while driving.
      */
-    private final boolean visionDriveTest = true;
+    private final boolean visionDriveTest = false;
 
     /**
      * The Singleton instance of this shooterSubsystem. Code should use
@@ -197,7 +197,7 @@ public class SwerveSubsystem extends SubsystemBase
                 this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                        new PIDConstants(0.0018645, 0.0, 0.000712),
+                        new PIDConstants(0.0021645, 0.0, 0.000712),
                         // Translation PID constants
                         new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
                                 swerveDrive.swerveController.config.headingPIDF.i,
