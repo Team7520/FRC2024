@@ -213,8 +213,8 @@ public final class Constants {
             public static final double kA = 0;
 
             public static final double motionMagicVelocity = 10;
-            public static final double motionMagicAccel = 200/50;
-            public static final double motionMagicJerk = 2000/3;
+            public static final double motionMagicAccel = 7.5;
+            public static final double motionMagicJerk = 42.5;
         }
     }
 

@@ -80,6 +80,10 @@ public class ShooterSubsystem extends SubsystemBase {
                 new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(77.6)
         );
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitEnable(true)
+        );
 
         slot0Configs.kP = PivotConstants.kP;
         slot0Configs.kI = PivotConstants.kI;
@@ -116,7 +120,22 @@ public class ShooterSubsystem extends SubsystemBase {
         motorConfigs.NeutralMode = TraverseConstants.neutralMode;
         tlnfxConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         tlnfxConfigs.Feedback.SensorToMechanismRatio = TraverseConstants.degreeConversionFactor;
-
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitThreshold(1)
+        );
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withReverseSoftLimitThreshold(-1)
+        );
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitEnable(true)
+        );
+        tlnfxConfigs.withSoftwareLimitSwitch(
+                new SoftwareLimitSwitchConfigs()
+                        .withReverseSoftLimitEnable(true)
+        );
 
         slot0Configs.kP = TraverseConstants.kP;
         slot0Configs.kI = TraverseConstants.kI;
@@ -170,6 +189,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Rotation3d getTurretPosition() {
         return new Rotation3d(0, getPivotEncoder().getRadians(), getTraverseEncoder().getRadians());
+    }
+
+    public double getPivotEncoderError() {
+        return pivotMotor.getClosedLoopError().getValueAsDouble();
+    }
+
+    public double getTraverseEncoderError() {
+        return traverseMotor.getClosedLoopError().getValueAsDouble();
     }
 
     public void setSpeed(double speed, boolean closedLoop) {
@@ -284,8 +311,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Rotation2d targetPitch = new Rotation2d(target.getX(), target.getZ());
         // Aim at the target.
         setTraversePosition(targetYaw.plus(Rotation2d.fromDegrees(180)));
-        //setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
-
+        setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
+        SmartDashboard.putNumber("targetYaw", targetYaw.getDegrees());
     }
 
 
@@ -302,7 +329,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("pivotVoltage", pivotMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("pivotCurr", pivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("pivotClosedLoopError", pivotMotor.getClosedLoopError().getValueAsDouble());
-        SmartDashboard.putNumber("traverseEncoder", getTraverseEncoder().getDegrees());
+        SmartDashboard.putNumber("traverseEncoder", getTraverseEncoder().getRotations());
         SmartDashboard.putNumber("traverseVel", traverseMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("traverseVoltage", traverseMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("traverseCurr", traverseMotor.getStatorCurrent().getValueAsDouble());

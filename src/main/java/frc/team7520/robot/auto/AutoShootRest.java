@@ -2,13 +2,14 @@ package frc.team7520.robot.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.team7520.robot.Constants;
+import frc.team7520.robot.Constants.ShooterConstants.Position;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 
 
-public class AutoShootPos extends Command {
+public class AutoShootRest extends Command {
     private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
-    public AutoShootPos() {
+    public AutoShootRest() {
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(this.shooterSubsystem);
@@ -16,11 +17,12 @@ public class AutoShootPos extends Command {
 
     @Override
     public void initialize() {
+        shooterSubsystem.setTurretPosition(Position.REST);
     }
 
     @Override
     public void execute() {
-        shooterSubsystem.aimAtTarget(shooterSubsystem.getSpeakerTranslation());
+
     }
 
     @Override
