@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4,
+      "y": 5.551187918118234
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpeakerC.Note2(SnapBack)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note2.Note3(SnapBack)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note3.Note1(SnapBack)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Movement Tests",
+  "choreoAuto": false
+}

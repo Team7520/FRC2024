@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3763132980811417,
+      "y": 7.0
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp.Note1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note1.Note4(Amp)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note4.Wingline(Amp)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wingline.Note5(Amp)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note5.Wingline(Amp)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wingline.Note6(Amp)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note6.Wingline(Amp)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Movement Tests",
+  "choreoAuto": false
+}

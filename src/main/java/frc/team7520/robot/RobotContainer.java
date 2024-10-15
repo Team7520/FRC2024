@@ -148,6 +148,11 @@ public class RobotContainer
         autoChooser.addOption("4NoteAutoRed", drivebase.getAutonomousCommand("4NoteAuto(RED)"));
         autoChooser.addOption("CenterAutoBlue", drivebase.getAutonomousCommand("CenterAuto(BLUE)"));
         autoChooser.addOption("CenterAutoRed", drivebase.getAutonomousCommand("CenterAuto(RED)"));
+        autoChooser.addOption("4NoteNote1", drivebase.getAutonomousCommand("4NoteNote1"));
+        autoChooser.addOption("4NoteNote3", drivebase.getAutonomousCommand("4NoteNote3"));
+        autoChooser.addOption("CenterSource", drivebase.getAutonomousCommand("CenterSource"));
+        autoChooser.addOption("CenterAmp", drivebase.getAutonomousCommand("CenterAmp"));
+        autoChooser.addOption("CenterMiddle", drivebase.getAutonomousCommand("CenterMiddle"));
 
         SmartDashboard.putData(autoChooser);
         // SmartDashboard.putBoolean("Shooting", true);

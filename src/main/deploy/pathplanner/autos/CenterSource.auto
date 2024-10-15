@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3763132980811417,
+      "y": 4.1
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpeakerS.Note8(SnapBack)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note8.Wingline(Source)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wingline.Note7(Source)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note7.Wingline(Source)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wingline.Note6(Source)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note6.Wingline(Source)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Movement Tests",
+  "choreoAuto": false
+}

@@ -284,7 +284,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Rotation2d targetPitch = new Rotation2d(target.getX(), target.getZ());
         // Aim at the target.
         setTraversePosition(targetYaw.plus(Rotation2d.fromDegrees(180)));
-        setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
+        //setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
 
     }
 
