@@ -171,7 +171,7 @@ public class LED extends SubsystemBase {
         }
 
         m_ledController.set(m_Color);
-        System.err.println(m_Color);
+        // System.err.println(m_Color);
     }
 }
 
