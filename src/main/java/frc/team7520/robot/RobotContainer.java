@@ -5,6 +5,7 @@
 
 package frc.team7520.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.Idle;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
@@ -137,6 +138,7 @@ public class RobotContainer
         shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);
+        LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
     }
 
     private void registerAutos(){
