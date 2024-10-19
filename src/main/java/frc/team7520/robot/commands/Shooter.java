@@ -4,6 +4,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.team7520.robot.Constants;
+import frc.team7520.robot.subsystems.LED;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 import frc.team7520.robot.subsystems.swerve.Vision;
 
@@ -52,8 +53,6 @@ public class Shooter extends Command {
             Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, Double.MAX_VALUE);
 //            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().plus(Rotation2d.fromDegrees(2)));
             shooterSubsystem.aimAtTarget(shooterSubsystem.getSpeakerTranslation());
-
-
         }
 
         if (turretRest.getAsBoolean()){
@@ -87,6 +86,7 @@ public class Shooter extends Command {
             var target = shooterSubsystem.getFeedTranslation();
             shooterSubsystem.setTraversePosition(new Rotation2d(target.getX(), target.getY()));
             shooterSubsystem.setPivotPosition(Rotation2d.fromDegrees(40));
+            LED.getInstance().feeding();
         }
 
         if (POVSup.getAsDouble() == 270){
@@ -95,7 +95,6 @@ public class Shooter extends Command {
             Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
 //            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().minus(Rotation2d.fromDegrees(1)));
             shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.REST180);
-
         }
     }
 

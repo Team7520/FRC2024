@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class LED extends SubsystemBase {
 
@@ -54,28 +55,106 @@ public class LED extends SubsystemBase {
         m_ledController.set(m_Color);
     }
 
-    public void idle() {
-        alliance = DriverStation.getAlliance();
+    private void black() {
+        // alliance = DriverStation.getAlliance();
 
-        if (alliance.get() == Alliance.Red) {
-            m_Color = -0.31; // LIGHT CHASE RED
-        }
+        // if (alliance.get() == Alliance.Red) {
+        //     m_Color = -0.31; // LIGHT CHASE RED
+        // }
 
-        else if (alliance.get() == Alliance.Blue) {
-            m_Color = -0.29; // LIGHT CHASE BLUE
-        }
+        // else if (alliance.get() == Alliance.Blue) {
+        //     m_Color = -0.29; // LIGHT CHASE BLUE
+        // }
         
+        m_ledController.set(0.99); //BLACK
+    }
+
+    private void green() {
+        m_Color = 0.77; // GREEN
         m_ledController.set(m_Color);
     }
 
-    public void noteInIntake() {
+    private void white() {
         m_Color = 0.93; // WHITE
         m_ledController.set(m_Color);
     }
 
-    public void noteInTurret() {
-        m_Color = 0.77; // GREEN
+    private void red() {
+        m_Color = 0.61; // RED
         m_ledController.set(m_Color);
+    }
+
+    private void blue() {
+        m_Color = 0.87; // BLUE
+        m_ledController.set(m_Color);
+    }
+
+    private void yellow() {
+        m_Color = 0.69; // YELLOW
+        m_ledController.set(m_Color);
+    }
+
+    public Command idle() {
+        return run(
+            () -> {
+                black();
+            }
+        );
+    }
+
+    public Command noteInIntake() {
+        return run(
+            () -> {
+                green();
+                new WaitCommand(0.25);
+                black();
+                new WaitCommand(0.25);
+            }
+        );
+    }
+    
+    public Command noteInTurret() {
+        return run(
+            () -> {
+                white();
+                new WaitCommand(0.25);
+                black();
+                new WaitCommand(0.25);
+            }
+        );
+    }
+
+    public Command noTag() {
+        return run(
+            () -> {
+                red();
+                new WaitCommand(0.25);
+                black();
+                new WaitCommand(0.25);
+            }
+        );
+    }
+
+    public Command tagFound() {
+        return run(
+            () -> {
+                blue();
+                new WaitCommand(0.25);
+                black();
+                new WaitCommand(0.25);
+            }
+        );
+    }
+
+    public Command feeding() {
+        return run(
+            () -> {
+                yellow();
+                new WaitCommand(0.25);
+                black();
+                new WaitCommand(0.25);
+            }
+        );
     }
 }
 
