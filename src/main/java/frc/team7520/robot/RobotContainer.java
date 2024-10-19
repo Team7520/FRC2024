@@ -138,7 +138,7 @@ public class RobotContainer
         shooterSubsystem.setDefaultCommand(shooter);
         intakeSubsystem.setDefaultCommand(intake);
         sensorSubsystem.setDefaultCommand(sensor);
-        LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
+        // LEDSubsystem.setDefaultCommand(LEDSubsystem.idle());
     }
 
     private void registerAutos(){
