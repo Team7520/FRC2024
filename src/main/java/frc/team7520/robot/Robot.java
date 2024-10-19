@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
+import frc.team7520.robot.subsystems.swerve.Vision;
+
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -87,12 +89,16 @@ public class Robot extends TimedRobot
         {
             autonomousCommand.schedule();
         }
+        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, Double.MAX_VALUE);
+        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, Double.MAX_VALUE);
     }
 
 
     /** This method is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+
+    }
 
 
     @Override
@@ -113,7 +119,10 @@ public class Robot extends TimedRobot
 
     /** This method is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, 0.2);
+        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
+    }
 
 
     @Override

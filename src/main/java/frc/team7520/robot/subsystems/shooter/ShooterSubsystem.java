@@ -104,8 +104,6 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotMotor.setInverted(true);
 
         pivotMotor.setPosition(0);
-
-        setPivotPosition(Rotation2d.fromDegrees(77.6));
     }
 
     private void configTraverse(TalonFX traverseMotor) {
