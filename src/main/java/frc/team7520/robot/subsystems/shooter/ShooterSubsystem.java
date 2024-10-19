@@ -78,12 +78,6 @@ public class ShooterSubsystem extends SubsystemBase {
                 new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(77.6)
         );
-        tlnfxConfigs.withSoftwareLimitSwitch(
-                new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitEnable(true)
-        );
-
-
 
         slot0Configs.kP = PivotConstants.kP;
         slot0Configs.kI = PivotConstants.kI;
@@ -125,22 +119,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motorConfigs.NeutralMode = TraverseConstants.neutralMode;
         tlnfxConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         tlnfxConfigs.Feedback.SensorToMechanismRatio = TraverseConstants.degreeConversionFactor;
-        tlnfxConfigs.withSoftwareLimitSwitch(
-                new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitThreshold(1)
-        );
-        tlnfxConfigs.withSoftwareLimitSwitch(
-                new SoftwareLimitSwitchConfigs()
-                        .withReverseSoftLimitThreshold(-1)
-        );
-        tlnfxConfigs.withSoftwareLimitSwitch(
-                new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitEnable(true)
-        );
-        tlnfxConfigs.withSoftwareLimitSwitch(
-                new SoftwareLimitSwitchConfigs()
-                        .withReverseSoftLimitEnable(true)
-        );
+
 
         slot0Configs.kP = TraverseConstants.kP;
         slot0Configs.kI = TraverseConstants.kI;
@@ -264,7 +243,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getPitchWithDistance(double distance){
-        return Rotation2d.fromDegrees(108-(36.9*distance)+(4.26*distance*distance));
+        return Rotation2d.fromDegrees(92.9-(25.4*distance)+(2.23*distance*distance));
     }
 
     /**
@@ -287,6 +266,15 @@ public class ShooterSubsystem extends SubsystemBase {
         int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+        if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
+        return speakerAprilTagPose.relativeTo(new Pose3d(swerveDrive.getPose())).getTranslation();
+    }
+
+    public Translation3d getFeedTranslation()
+    {
+        int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
+        // Taken from PhotonUtils.getYawToPose()
+        Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get().plus(new Transform3d(0, 1.5, 0, new Rotation3d()));
         if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
         return speakerAprilTagPose.relativeTo(new Pose3d(swerveDrive.getPose())).getTranslation();
     }

@@ -1,10 +1,13 @@
 package frc.team7520.robot.commands;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.team7520.robot.Constants;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
+import frc.team7520.robot.subsystems.swerve.Vision;
 
+import java.util.Vector;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -45,11 +48,17 @@ public class Shooter extends Command {
 //        shooterSubsystem.aimAtTarget(shooterSubsystem.getSpeakerTranslation());
         shooterSubsystem.setSpeed(throttle, false);
         if (turretTrack.getAsBoolean()){
+            Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, Double.MAX_VALUE);
+            Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, Double.MAX_VALUE);
 //            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().plus(Rotation2d.fromDegrees(2)));
             shooterSubsystem.aimAtTarget(shooterSubsystem.getSpeakerTranslation());
+
+
         }
 
         if (turretRest.getAsBoolean()){
+            Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, 0.2);
+            Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
 //            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().minus(Rotation2d.fromDegrees(1)));
             shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.REST);
         }
@@ -70,6 +79,23 @@ public class Shooter extends Command {
             }
         }else {
             downLock = false;
+        }
+
+        if(POVSup.getAsDouble() == 90){
+            Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, Double.MAX_VALUE);
+            Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, Double.MAX_VALUE);
+            var target = shooterSubsystem.getFeedTranslation();
+            shooterSubsystem.setTraversePosition(new Rotation2d(target.getX(), target.getY()));
+            shooterSubsystem.setPivotPosition(Rotation2d.fromDegrees(40));
+        }
+
+        if (POVSup.getAsDouble() == 270){
+
+            Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, 0.2);
+            Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
+//            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().minus(Rotation2d.fromDegrees(1)));
+            shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.REST180);
+
         }
     }
 

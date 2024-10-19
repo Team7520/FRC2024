@@ -370,7 +370,7 @@ public class Vision
      * Camera Enum to select each camera
      */
     @Getter
-    enum Cameras
+    public enum Cameras
     {
         /**
          * ShooterCamera
@@ -378,8 +378,8 @@ public class Vision
         SHOOTER_CAMERA("AprilCam",
                 new Rotation3d(0, Units.degreesToRadians(30), 0),
                 new Translation3d(0, 0, 0),
-                VecBuilder.fill(0.1, 0.1, 0.1),
-                VecBuilder.fill(0.1, 0.1, 0.1));
+                VecBuilder.fill(0.2, 0.2, 0.2),
+                VecBuilder.fill(0.2, 0.2, 0.2));
 
         /**
          * Latency alert to use when high latency is detected.

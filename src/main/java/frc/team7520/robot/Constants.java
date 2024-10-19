@@ -8,8 +8,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import lombok.Getter;
 import swervelib.math.Matter;
@@ -157,6 +161,7 @@ public final class Constants {
         public enum Position {
             // Use Rotation2d.fromDegrees for more intuitive degree handling
             REST(0, 0), // DO NOT CHANGE
+            REST180(0, 180),
             DRIVE(0, -95),
             SUBWOOFERCENTER(77.6, 0),
             SUBWOOFERLEFT(77.6, 95),
@@ -184,7 +189,7 @@ public final class Constants {
 
             public static final double gearRatio = 80.0/3;
             public static final double degreeConversionFactor = 1/gearRatio;
-            public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
+            public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
             public static final double kP = 0.75;
             public static final double kI = 0;
             public static final double kD = 0;
@@ -204,18 +209,18 @@ public final class Constants {
 
             public static final double gearRatio = 14/160.0;
             public static final double degreeConversionFactor = 1/(gearRatio);
-            public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
-            public static final double kP = 80;
-            public static final double kI = 0;
+            public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
+            public static final double kP = 75;
+            public static final double kI = 2;
             public static final double kD = 0;
             public static final double kG = 0;
             public static final double kS = 0;
             public static final double kV = 0;
             public static final double kA = 0;
 
-            public static final double motionMagicVelocity = 10;
-            public static final double motionMagicAccel = 1;
-            public static final double motionMagicJerk = 0;
+            public static final double motionMagicVelocity = 20;
+            public static final double motionMagicAccel = 5;
+            public static final double motionMagicJerk = 5;
             public static double currentLimit = 20;
         }
     }
@@ -273,6 +278,12 @@ public final class Constants {
         public static final double SmartAccel = 100; //10000
         public static final double SmartErr = 2;
         public static final int SlotID = 0;
+
+    }
+
+    public static final class Vision{
+
+        public static final Vector<N3> stdDevs = VecBuilder.fill(0.2, 0.2, 0.2);
 
     }
 }

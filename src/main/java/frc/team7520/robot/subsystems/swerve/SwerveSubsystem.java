@@ -70,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase
     /**
      * Enable vision odometry updates while driving.
      */
-    private final boolean visionDriveTest = false;
+    private final boolean visionDriveTest = true;
 
     /**
      * The Singleton instance of this shooterSubsystem. Code should use
@@ -156,9 +156,6 @@ public class SwerveSubsystem extends SubsystemBase
         // When vision is enabled we must manually update odometry in SwerveDrive
         if (visionDriveTest)
         {
-            swerveDrive.updateOdometry();
-            vision.updatePoseEstimation(swerveDrive);
-
             var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
 
             // Update the vision's Bot to Camera transform based on shooter's current position
@@ -178,6 +175,12 @@ public class SwerveSubsystem extends SubsystemBase
                                     shooterSubsystem.getTraverseEncoder().getRadians())
                     )
             );
+
+            swerveDrive.updateOdometry();
+            vision.updatePoseEstimation(swerveDrive);
+
+//            System.out.println("updating");
+
         }
     }
 
@@ -366,9 +369,21 @@ public class SwerveSubsystem extends SubsystemBase
      *                      relativity.
      * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
      */
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if
+        // necessary.
+        ChassisSpeeds velocity =
+                fieldRelative
+                        ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                        translation.getX(), translation.getY(), rotation, swerveDrive.getOdometryHeading().rotateBy((DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? new Rotation2d(): Rotation2d.fromDegrees(180))))
+                        : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
+
+        swerveDrive.drive(velocity, isOpenLoop, new Translation2d());
+    }
+
     public void drive(Translation2d translation, double rotation, boolean fieldRelative)
     {
-        swerveDrive.drive(translation,
+        drive(translation,
                 rotation,
                 fieldRelative,
                 false); // Open loop is disabled since it shouldn't be used most of the time.
