@@ -131,7 +131,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setMotorIdleMode(true);
 
-        setupPathPlanner();
+        //setupPathPlanner();
     }
 
     public SwerveSubsystem(File directory, StringTopic topic) {
@@ -161,7 +161,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setMotorIdleMode(true);
 
-        setupPathPlanner();
+        //setupPathPlanner();
     }
 
     public boolean getNoteAvailable() {

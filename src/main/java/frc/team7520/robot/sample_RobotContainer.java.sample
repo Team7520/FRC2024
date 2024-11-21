@@ -1,0 +1,25 @@
+
+import frc.robot.subsystems.swerve.SwerveBase;
+import frc.robot.util.PathPlannerHelper;
+
+public class RobotContainer {
+
+    /* Subsystems */
+    private final SwerveBase s_Swerve = new SwerveBase();
+
+    public RobotContainer() {
+
+        PathPlannerHelper.initializeAutoBuilder(s_Swerve);
+
+        // Configure the button bindings
+        configureButtonBindings();
+    }
+
+    private void configureButtonBindings() {
+/*
+        YButton.onTrue(
+            PathPlannerHelper.goToPoseCommand_preplanned(s_Swerve, "turn 90")
+        );
+*/
+    }
+)
