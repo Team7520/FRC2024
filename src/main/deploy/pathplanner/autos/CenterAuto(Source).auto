@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7952442380734501,
-      "y": 4.435076061565361
+      "x": 1.3763132980811417,
+      "y": 4.1
     },
-    "rotation": 30.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "revShooter"
+          }
+        },
         {
           "type": "race",
           "data": {
@@ -18,7 +24,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.85
                 }
               },
               {
@@ -63,6 +69,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "SpeakerS.Note8(SnapBack)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
                 }
               },
               {
@@ -141,6 +159,18 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
                   "pathName": "Note7.Wingline(Source)"
@@ -201,6 +231,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "Wingline.Note6(Source)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
                 }
               },
               {

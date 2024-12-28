@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team7520.robot.Constants;
+import frc.team7520.robot.RobotContainer;
 import frc.team7520.robot.Constants.ShooterConstants;
 import frc.team7520.robot.Constants.ShooterConstants.PivotConstants;
 import frc.team7520.robot.Constants.ShooterConstants.TraverseConstants;
@@ -233,7 +234,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double getDistanceToSpeaker()
     {
-        int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
+        int allianceAprilTag = RobotContainer.getAlliance() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getDistanceToPose
         Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
         if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
@@ -241,7 +242,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getPitchWithDistance(double distance){
-        return Rotation2d.fromDegrees(92.9-(25.4*distance)+(2.23*distance*distance));
+        return Rotation2d.fromDegrees(95-(25.4*distance)+(2.23*distance*distance));
     }
 
     /**
@@ -251,7 +252,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public Rotation2d getSpeakerYaw()
     {
-        int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
+        int allianceAprilTag = RobotContainer.getAlliance() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
         if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
@@ -261,7 +262,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Translation3d getSpeakerTranslation()
     {
-        int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
+        int allianceAprilTag = RobotContainer.getAlliance() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
         if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
@@ -270,7 +271,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Translation3d getFeedTranslation()
     {
-        int allianceAprilTag = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 7 : 4;
+        int allianceAprilTag = RobotContainer.getAlliance() == DriverStation.Alliance.Blue ? 7 : 4;
         // Taken from PhotonUtils.getYawToPose()
         Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get().plus(new Transform3d(0, 1.5, 0, new Rotation3d()));
         if (swerveDrive == null) swerveDrive = SwerveSubsystem.getInstance();
@@ -305,7 +306,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Rotation2d targetYaw = new Rotation2d(target.getX(), target.getY());
         Rotation2d targetPitch = new Rotation2d(target.getX(), target.getZ());
         // Aim at the target.
-        setTraversePosition(targetYaw);
+        setTraversePosition(Rotation2d.fromDegrees((targetYaw.getDegrees()+360)%360));
         setPivotPosition(getPitchWithDistance(getDistanceToSpeaker()));
         SmartDashboard.putNumber("targetYaw", targetYaw.getDegrees());
     }

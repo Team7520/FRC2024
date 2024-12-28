@@ -10,15 +10,19 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.team7520.robot.auto.AutoIntake;
+import frc.team7520.robot.auto.AutoShoot;
 // import frc.team7520.robot.Constants.IntakeConstants;
 // import frc.team7520.robot.Constants.IntakeConstants.Position;
 import frc.team7520.robot.auto.AutoShootPos;
 import frc.team7520.robot.auto.AutoShootRest;
+import frc.team7520.robot.auto.AutoShootSubwooferCenter;
 import frc.team7520.robot.auto.ShootSequence;
 import frc.team7520.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -90,7 +94,8 @@ public class RobotContainer
         operatorController::getLeftTriggerAxis,
             operatorController::getXButton,
             operatorController::getYButton,
-            operatorController::getPOV
+            operatorController::getPOV,
+            operatorController::getBackButton
         );
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -180,10 +185,12 @@ public class RobotContainer
         // NamedCommands.registerCommand("shootWinglineBlue", new AutoShootPos(Position.WINGLINEBLUE));
         // NamedCommands.registerCommand("shootWinglineRed", new AutoShootPos(Position.WINGLINERED));
         NamedCommands.registerCommand("shooterRest", new AutoShootRest());
+        NamedCommands.registerCommand("shootSubwooferCenter", new AutoShootSubwooferCenter());
+        NamedCommands.registerCommand("revShooter", new AutoShoot(1).raceWith(new WaitCommand(0.5)));
         NamedCommands.registerCommand("shoot", new ShootSequence());
         // NamedCommands.registerCommand("log", new InstantCommand(() -> System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee")));
-        // NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).until(() -> sensorSubsystem.getColorSensorProximity() > ShooterConstants.colourSensorSensedProximity));
-        NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).raceWith(new WaitCommand(1)));
+        NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).until(() -> sensorSubsystem.getColorSensorProximity()).raceWith(new WaitCommand(1)));
+        // NamedCommands.registerCommand("intake", new AutoIntake(0.6, 0.85, 0.2).raceWith(new WaitCommand(1)));
         // NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> new AutoIntake(0, 0, 0)));
     }
 
@@ -240,5 +247,13 @@ public class RobotContainer
 
         //shooterSubsystem.setDefaultCommand(shooter);
 
+    }
+
+    public static Alliance getAlliance              () {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        var alliance = DriverStation.getAlliance();
+        return alliance.isPresent() ? alliance.get() : Alliance.Blue;
     }
 }

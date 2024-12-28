@@ -393,8 +393,8 @@ public class Vision
          * Pose estimator for camera.
          */
         public final  PhotonPoseEstimator poseEstimator;
-        public final  Matrix<N3, N1>      singleTagStdDevs;
-        public final  Matrix<N3, N1>      multiTagStdDevs;
+        public  Matrix<N3, N1>      singleTagStdDevs;
+        public  Matrix<N3, N1>      multiTagStdDevs;
         /**
          * Transform of the camera rotation and translation relative to the center of the robot
          */

@@ -14,14 +14,12 @@ public class ShootSequence extends SequentialCommandGroup {
         //           super(new OpenClawCommand(), new MoveArmCommand());
         super(
                 new ParallelRaceGroup(
-                    new AutoShoot(1),
-                    new WaitCommand(0.5)
-                ),
-                new ParallelCommandGroup(
-                    new WaitCommand(1),
-                    new AutoFeeder(0.9, 1).until(() -> !SensorSubsystem.getInstance().getColorSensorProximity())
-                ),
-                ShooterSubsystem.getInstance().stopShooting()
+                    new AutoFeeder(0.9, 1),
+                    new ParallelCommandGroup(
+                        new InstantCommand().until(() -> !SensorSubsystem.getInstance().getColorSensorProximity()),
+                        new WaitCommand(0.75)
+                    )
+                )
         );
     }
 }

@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "revShooter"
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -28,7 +34,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.5
+                        "waitTime": 0.75
                       }
                     }
                   ]
@@ -79,6 +85,18 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
                 "type": "race",
                 "data": {
                   "commands": [
@@ -91,7 +109,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.5
+                        "waitTime": 0.6
                       }
                     }
                   ]
@@ -116,7 +134,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "setShootPosition"
+                        "name": "shooterRest"
                       }
                     }
                   ]
@@ -133,6 +151,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "Note2.Note7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
                 }
               },
               {
@@ -160,7 +190,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.6
                       }
                     }
                   ]
@@ -185,7 +215,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "setShootPosition"
+                        "name": "shooterRest"
                       }
                     }
                   ]
@@ -202,6 +232,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "Stage.Note6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
                 }
               },
               {
@@ -229,7 +271,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.6
                       }
                     }
                   ]
@@ -254,7 +296,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "setShootPosition"
+                        "name": "shooterRest"
                       }
                     }
                   ]
@@ -271,6 +313,18 @@
                 "type": "path",
                 "data": {
                   "pathName": "Stage.Note5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.05
                 }
               },
               {
@@ -298,7 +352,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.75
+                        "waitTime": 0.6
                       }
                     }
                   ]
@@ -323,7 +377,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "setShootPosition"
+                        "name": "shooterRest"
                       }
                     }
                   ]

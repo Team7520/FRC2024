@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.team7520.robot.RobotContainer;
 import frc.team7520.robot.Constants.OperatorConstants;
 
 public class LED extends SubsystemBase {
@@ -31,7 +32,7 @@ public class LED extends SubsystemBase {
 
     private double m_Color = 0.0;
     private Spark m_ledController = new Spark(0);
-    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Alliance alliance = RobotContainer.getAlliance();
     private SensorSubsystem sensorSubsystem = SensorSubsystem.getInstance();
 
     private final XboxController operatorController =

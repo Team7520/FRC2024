@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.team7520.robot.subsystems.LED;
 import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -89,8 +90,8 @@ public class Robot extends TimedRobot
         {
             autonomousCommand.schedule();
         }
-        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, Double.MAX_VALUE);
-        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, Double.MAX_VALUE);
+        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs  = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
 
@@ -114,14 +115,15 @@ public class Robot extends TimedRobot
         }
 
         robotContainer.teleOpInit();
+        ShooterSubsystem.getInstance().stopShooting();
     }
 
 
     /** This method is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs.set(2, 0, 0.2);
-        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
+        Vision.Cameras.SHOOTER_CAMERA.singleTagStdDevs = VecBuilder.fill(0.2, 0.2, 0.2);
+        Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs  = VecBuilder.fill(0.2, 0.2, 0.2);
     }
 
 

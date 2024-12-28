@@ -163,7 +163,7 @@ public final class Constants {
             REST(0, 0), // DO NOT CHANGE
             REST180(0, 180),
             DRIVE(0, -95),
-            SUBWOOFERCENTER(77.6, 0),
+            SUBWOOFERCENTER(77.6, 180),
             SUBWOOFERLEFT(77.6, 95),
             SUBWOOFERRIGHT(77.6, -95),
             WINGLINERED(35, 42.3),
@@ -210,7 +210,7 @@ public final class Constants {
             public static final double gearRatio = 14/160.0;
             public static final double degreeConversionFactor = 1/(gearRatio);
             public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
-            public static final double kP = 75;
+            public static final double kP = 75; 
             public static final double kI = 2;
             public static final double kD = 0;
             public static final double kG = 0;

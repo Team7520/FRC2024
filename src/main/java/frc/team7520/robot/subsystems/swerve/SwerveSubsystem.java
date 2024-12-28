@@ -180,6 +180,9 @@ public class SwerveSubsystem extends SubsystemBase
             vision.updatePoseEstimation(swerveDrive);
 
 //            System.out.println("updating");
+            // System.err.println(swerveDrive.swerveController.config.headingPIDF.p);
+            // System.err.println(swerveDrive.swerveController.config.headingPIDF.i);
+            // System.err.println(swerveDrive.swerveController.config.headingPIDF.d);
 
         }
     }
@@ -200,13 +203,15 @@ public class SwerveSubsystem extends SubsystemBase
                 this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                        new PIDConstants(0.0021645, 0.0, 0.000712),
+                        new PIDConstants(0.03, 0.02, 0.001),
                         // Translation PID constants
                         new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
                                 swerveDrive.swerveController.config.headingPIDF.i,
                                 swerveDrive.swerveController.config.headingPIDF.d),
                         // Rotation PID constants
-                        4.87,
+                        4.87,+
+
+                        
                         // Max module speed, in m/s
                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
                         // Drive base radius in meters. Distance from robot center to furthest module.

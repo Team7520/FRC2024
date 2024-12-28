@@ -18,16 +18,18 @@ public class Shooter extends Command {
     private final BooleanSupplier turretRest;
     private final BooleanSupplier turretTrack;
     private final DoubleSupplier POVSup;
+    private final BooleanSupplier subwooferCenter;
 
     private boolean upLock = false;
     private boolean downLock = false;
 
-    public Shooter(ShooterSubsystem shooterSubsystem, DoubleSupplier throttleSup, BooleanSupplier turretRest, BooleanSupplier turretTrack, DoubleSupplier POVSup) {
+    public Shooter(ShooterSubsystem shooterSubsystem, DoubleSupplier throttleSup, BooleanSupplier turretRest, BooleanSupplier turretTrack, DoubleSupplier POVSup, BooleanSupplier subwooferCenter) {
         this.shooterSubsystem = shooterSubsystem;
         this.throttleSup = throttleSup;
         this.turretRest = turretRest;
         this.turretTrack = turretTrack;
         this.POVSup = POVSup;
+        this.subwooferCenter = subwooferCenter;
 
 
         // each subsystem used by the command must be passed into the
@@ -95,6 +97,10 @@ public class Shooter extends Command {
             Vision.Cameras.SHOOTER_CAMERA.multiTagStdDevs.set(2, 0, 0.2);
 //            shooterSubsystem.setPivotPosition(shooterSubsystem.getPivotEncoder().minus(Rotation2d.fromDegrees(1)));
             shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.REST180);
+        }
+
+        if (subwooferCenter.getAsBoolean()) {
+            shooterSubsystem.setTurretPosition(Constants.ShooterConstants.Position.SUBWOOFERCENTER);
         }
     }
 
