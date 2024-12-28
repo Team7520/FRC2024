@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import frc.team7520.robot.subsystems.shooter.ShooterSubsystem;
 import lombok.Getter;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -64,8 +63,6 @@ public class SwerveSubsystem extends SubsystemBase
 
     private List<Rotation3d> initialVisionReadings = new ArrayList<Rotation3d>();
     private Rotation3d initialVisionRotation;
-
-    private ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
     /**
      * Enable vision odometry updates while driving.
@@ -153,38 +150,38 @@ public class SwerveSubsystem extends SubsystemBase
     {
 
 
-        // When vision is enabled we must manually update odometry in SwerveDrive
-        if (visionDriveTest)
-        {
-            var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
+//         // When vision is enabled we must manually update odometry in SwerveDrive
+//         if (visionDriveTest)
+//         {
+//             var originalBotToCamera = Vision.Cameras.SHOOTER_CAMERA.poseEstimator.getRobotToCameraTransform();
 
-            // Update the vision's Bot to Camera transform based on shooter's current position
-            Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(
-                    new Transform3d(
-                            new Translation3d(
-                                    Units.inchesToMeters(7.5147),
-                                    new Rotation3d(
-                                            0,
-                                            0,
-                                            shooterSubsystem.getTraverseEncoder().getRadians()
-                                    )
-                            ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
-                            new Rotation3d(
-                                    originalBotToCamera.getRotation().getX(),
-                                    originalBotToCamera.getRotation().getY(),
-                                    shooterSubsystem.getTraverseEncoder().getRadians())
-                    )
-            );
+//             // Update the vision's Bot to Camera transform based on shooter's current position
+//             Vision.Cameras.SHOOTER_CAMERA.poseEstimator.setRobotToCameraTransform(
+//                     new Transform3d(
+//                             new Translation3d(
+//                                     Units.inchesToMeters(7.5147),
+//                                     new Rotation3d(
+//                                             0,
+//                                             0,
+//                                             shooterSubsystem.getTraverseEncoder().getRadians()
+//                                     )
+//                             ).plus(new Translation3d(0, 0, Units.inchesToMeters(11.593281))),
+//                             new Rotation3d(
+//                                     originalBotToCamera.getRotation().getX(),
+//                                     originalBotToCamera.getRotation().getY(),
+//                                     shooterSubsystem.getTraverseEncoder().getRadians())
+//                     )
+//             );
 
-            swerveDrive.updateOdometry();
-            vision.updatePoseEstimation(swerveDrive);
+//             swerveDrive.updateOdometry();
+//             vision.updatePoseEstimation(swerveDrive);
 
-//            System.out.println("updating");
-            // System.err.println(swerveDrive.swerveController.config.headingPIDF.p);
-            // System.err.println(swerveDrive.swerveController.config.headingPIDF.i);
-            // System.err.println(swerveDrive.swerveController.config.headingPIDF.d);
+// //            System.out.println("updating");
+//             // System.err.println(swerveDrive.swerveController.config.headingPIDF.p);
+//             // System.err.println(swerveDrive.swerveController.config.headingPIDF.i);
+//             // System.err.println(swerveDrive.swerveController.config.headingPIDF.d);
 
-        }
+//         }
     }
 
     @Override
